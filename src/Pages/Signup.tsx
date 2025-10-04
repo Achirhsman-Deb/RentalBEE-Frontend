@@ -22,7 +22,7 @@ interface Errors {
 }
 
 const Signup: React.FC = () => {
-  const captchaSiteKey = "6LfsON4rAAAAANevryYhHCZncflHk2eXdWT9Vn9W";
+  const captchaSiteKey = "6LdyYN4rAAAAAIoYZZTkD_dw5J8zXUef4egxWJsV";
   const navigate = useNavigate();
   const myAlert = useAlert();
   const dispatch = useDispatch<AppDispatch>();
