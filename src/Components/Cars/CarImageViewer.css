@@ -1,0 +1,81 @@
+/* CarImageViewer.css */
+
+/* Default Thumbnail width for smaller screens */
+.thumbnail {
+    width: 150px;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+    opacity: 0.7;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  /* Hover and selected state for thumbnails */
+  .thumbnail:hover {
+    border-color: black;
+    opacity: 1;
+  }
+  
+  .thumbnail.selected {
+    border-color: black;
+    opacity: 1;
+  }
+  
+  /* Medium screens (md) - Increase the width */
+  @media (min-width: 768px) {
+    .thumbnail {
+      width: 200px;
+    }
+  }
+  
+  /* Large screens (lg) - Further increase the width */
+  @media (min-width: 1024px) {
+    .thumbnail {
+      width: 220px;
+    }
+  }
+  
+  /* Thumbnail grid styling */
+  .thumbnail-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    height: 375px;
+  }
+  
+  @media (min-width: 1024px) {
+    .thumbnail-container {
+      grid-template-columns: repeat(4, 1fr); /* 4 columns on larger screens */
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .thumbnail-container {
+      grid-template-columns: repeat(5, 1fr); /* 5 columns on extra-large screens */
+    }
+  }
+  
+  /* Main image styling */
+  .main-image {
+    width: 500px;
+    height: 375px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+  
+  
+  /* Adjust main image size for larger screens */
+  @media (min-width: 768px) {
+    .main-image {
+      width: 620px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .main-image {
+      width: 750px;
+    }
+  }
+  

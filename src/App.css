@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #FFFBF3;
+  /* color: #1f2937; */
+  margin: 0;
+  padding: 0;
+}
+
+
+/* for alert toast animation  */
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.2s ease-out forwards;
+  /* Faster slide-in */
+}
+
+.animate-slideOut {
+  animation: slideOut 0.5s ease-in forwards;
+  /* Faster slide-out */
+}
+
+/* Global CSS for shimmer effect */
+
+/* The container for each shimmer loading element */
+.shimmer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* The shimmer effect for the question text */
+.shimmer-question,
+.shimmer-answer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 8px;
+}
+
+/* Shimmer effect for the question, with width and height adjustments */
+.shimmer-question {
+  width: 80%;
+  height: 24px;  /* Adjust height as needed */
+}
+
+/* Shimmer effect for the answer, with width and height adjustments */
+.shimmer-answer {
+  width: 100%;
+  height: 16px;  /* Adjust height as needed */
+}
+
+/* Animation for shimmer effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+
+/* Shimmer effect for loading state */
+.shimmer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.shimmer-title,
+.shimmer-number,
+.shimmer-description {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 4px;
+}
+
+.shimmer-title {
+  width: 60%;
+  height: 40px;
+  margin-bottom: 10px;
+}
+
+.shimmer-number {
+  width: 40%;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.shimmer-description {
+  width: 80%;
+  height: 20px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}

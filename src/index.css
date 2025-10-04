@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-black: #000000;
+    --color-red-primary: #FFD60A;
+    --color-red-accent: #E6B800;
+    --color-gray-light: #DCDCDD;
+    --color-gray-medium: #666666;
+    --color-gray-soft: #F0F0F0;
+    --color-white: #FFFFFF;
+    --color-beige: #FFFBF3;
+    --color-green: #149E32;
+}
+
+.shimmer {
+    animation: shimmer 1.5s infinite linear;
+    background: linear-gradient(90deg,
+            var(--color-gray-light) 0%,
+            var(--color-gray-medium) 50%,
+            var(--color-gray-light) 100%);
+    background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}
+
+.ellipse-hide {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-height: 1.9rem;
+    overflow: hidden;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+input::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
