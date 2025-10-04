@@ -3,11 +3,10 @@ import './CarImageViewer.css';
 
 interface CarImageViewerProps {
   images: string[];
-  status: string;
   className?: string;
 }
 
-const CarImageViewer: React.FC<CarImageViewerProps> = ({ images, status, className }) => {
+const CarImageViewer: React.FC<CarImageViewerProps> = ({ images, className }) => {
   const [selectedImage, setSelectedImage] = useState<string>(images[0]);
 
   useEffect(() => {

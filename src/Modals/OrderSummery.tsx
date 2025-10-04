@@ -173,7 +173,6 @@ const OrderSummery: React.FC<ModalProps> = ({ onClose, isOpen, Details }) => {
                         <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
                             <CarImageViewer
                                 images={carDetails?.images || []}
-                                status={carDetails?.status || "-"}
                                 className="w-full lg:w-[60%]"
                             />
                             <div className='flex flex-col w-full gap-4'>

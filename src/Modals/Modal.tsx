@@ -165,7 +165,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, car }) => {
             <div className="flex flex-col lg:flex-row gap-5 items-start w-full">
               <CarImageViewer
                 images={carDetails?.images || []}
-                status={carDetails?.status || "-"}
                 className="w-full lg:w-[60%]"
               />
               <CarDetailsCard
