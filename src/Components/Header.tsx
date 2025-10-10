@@ -38,7 +38,7 @@ const Header: React.FC = () => {
       }
     } else setloggedin(false);
   }, [user]);
-  
+
   useEffect(() => {
     setLocalNotis(items);
   }, [items]);
@@ -63,6 +63,15 @@ const Header: React.FC = () => {
             <NavLink to="/dashboard" className={getLinkClass("/dashboard")}>
               Dashboard
             </NavLink>
+          ) : user?.role === "SUPPORT_AGENT" ? (
+            <>
+              <NavLink to="/support-bookings" className={getLinkClass("/support-bookings")}>
+                Bookings
+              </NavLink>
+              <NavLink to="/user-verification" className={getLinkClass("/user-verification")}>
+                User Verification
+              </NavLink>
+            </>
           ) : (
             <>
               <NavLink to="/" className={getLinkClass("/")}>
@@ -195,42 +204,81 @@ const Header: React.FC = () => {
       </nav>
 
       {/* Mobile Bottom Navbar */}
-      {user?.role !== "ADMIN" && (
+      {user && (
         <div className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[#FFFBEA] border-t border-gray-200 flex items-center justify-around z-[60]">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
-              }`
-            }
-          >
-            <House />
-            <p className="font-light text-xs">Home</p>
-          </NavLink>
-          <NavLink
-            to="/cars"
-            className={({ isActive }) =>
-              `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
-              }`
-            }
-          >
-            <Car/>
-            <p className="font-light text-xs">Cars</p>
-          </NavLink>
-          {loggedin && (
+          {user.role === "ADMIN" ? (
             <NavLink
-              to="/my-bookings"
+              to="/dashboard"
               className={({ isActive }) =>
                 `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
                 }`
               }
             >
-              <BookCheck />
-              <p className="font-light text-xs">My bookings</p>
+              <House />
+              <p className="font-light text-xs">Dashboard</p>
             </NavLink>
+          ) : user.role === "SUPPORT_AGENT" ? (
+            <>
+              <NavLink
+                to="/support-bookings"
+                className={({ isActive }) =>
+                  `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
+                  }`
+                }
+              >
+                <BookCheck />
+                <p className="font-light text-xs">Bookings</p>
+              </NavLink>
+              <NavLink
+                to="/user-verification"
+                className={({ isActive }) =>
+                  `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
+                  }`
+                }
+              >
+                <Car />
+                <p className="font-light text-xs">User Verification</p>
+              </NavLink>
+            </>
+          ) : (
+            <>
+              <NavLink
+                to="/"
+                className={({ isActive }) =>
+                  `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
+                  }`
+                }
+              >
+                <House />
+                <p className="font-light text-xs">Home</p>
+              </NavLink>
+              <NavLink
+                to="/cars"
+                className={({ isActive }) =>
+                  `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
+                  }`
+                }
+              >
+                <Car />
+                <p className="font-light text-xs">Cars</p>
+              </NavLink>
+              {loggedin && (
+                <NavLink
+                  to="/my-bookings"
+                  className={({ isActive }) =>
+                    `flex flex-col items-center text-xs ${isActive ? "text-[#E6B800] font-semibold" : "text-[#222222]"
+                    }`
+                  }
+                >
+                  <BookCheck />
+                  <p className="font-light text-xs">My bookings</p>
+                </NavLink>
+              )}
+            </>
           )}
         </div>
       )}
+
 
       {/* Prevent content overlap */}
       <div className="h-14 md:hidden" />

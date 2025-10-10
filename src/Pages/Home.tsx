@@ -72,6 +72,9 @@ const Home: React.FC = () => {
       if (user?.role === "ADMIN") {
         navigate("/dashboard");
       }
+      if (user?.role === "SUPPORT_AGENT") {
+        navigate("/support-bookings");
+      }
     }
   }, [user]);
 

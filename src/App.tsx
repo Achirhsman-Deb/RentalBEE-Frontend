@@ -12,6 +12,8 @@ import MyProfile from "./Pages/MyProfile";
 import AdminDashboard from "./Pages/AdminDashboard";
 import EditBooking from "./Pages/EditBooking";
 import ForgotPassword from "./Pages/forgotPassword";
+import Support_Bookings from "./Pages/Support_Bookings";
+import Support_Users from "./Pages/Support_Users";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/my-bookings/edit-booking/:bookingId" element={<EditBooking/>}/>
           <Route path="/my-profile" element={<MyProfile/>}/> 
           <Route path="/dashboard" element={<AdminDashboard/>}/> 
+          <Route path="/support-bookings" element={<Support_Bookings/>}/>
+          <Route path="/user-verification" element={<Support_Users/>}/>
           <Route path="*" element={<PageNotFound/>}/>
         </Route>
         <Route element={<AuthLayout />}>
