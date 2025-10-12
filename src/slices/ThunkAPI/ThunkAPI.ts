@@ -5,6 +5,58 @@ import { EndPoint } from "../../utils";
 import { ExportReportPayload, ReportData, ReportFilters } from "../../types/ReportTypes";
 import { AppNotification } from "../NotificationSlice";
 
+export interface SingleDocument {
+  documentUrl: string | null;
+  status: string;
+  fileName: string | null;
+  fileSize: string | null;
+}
+
+export interface UserDocumentsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    AadhaarCard: SingleDocument;
+    DrivingLicense: SingleDocument;
+  };
+}
+
+export interface UserDocumentsParams {
+  userId: string;
+  token: string;
+}
+
+export interface DocumentStatus {
+  AadhaarCard: string;
+  DrivingLicense: string;
+}
+
+export interface UserWithDocuments {
+  userId: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  createdAt: string;
+  documents: DocumentStatus;
+}
+
+export interface FetchUsersResponse {
+  success: boolean;
+  message: string;
+  currentPage: number;
+  totalPages: number;
+  totalUsers: number;
+  count: number;
+  data: UserWithDocuments[];
+}
+
+export interface FetchUsersParams {
+  status?: "ALL" | "VERIFIED" | "UNVERIFIED";
+  page?: number;
+  limit?: number;
+  token: string | undefined;
+}
+
 interface ReservationData {
   token: string;
   carId: string;
@@ -548,7 +600,7 @@ export const ReadNotifications = createAsyncThunk<
   { rejectValue: string }
 >("notifications/readNotification", async (data, { rejectWithValue }) => {
   try {
-    const res = await axios.patch<{ success: boolean; notification: AppNotification }>(`${EndPoint}/notifications/${data.NotiId}/read`,{},{
+    const res = await axios.patch<{ success: boolean; notification: AppNotification }>(`${EndPoint}/notifications/${data.NotiId}/read`, {}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${data.token}`,
@@ -561,3 +613,60 @@ export const ReadNotifications = createAsyncThunk<
     );
   }
 });
+
+export const fetchUsersWithDocuments = createAsyncThunk<
+  FetchUsersResponse, // Return type
+  FetchUsersParams,   // Argument type
+  { rejectValue: string } // Rejection type
+>(
+  "admin/fetchUsersWithDocuments",
+  async ({ status = "ALL", page = 1, limit = 10, token }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get<FetchUsersResponse>(
+        `${EndPoint}/support/documents`,
+        {
+          params: { status, page, limit },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching users with documents:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch users"
+      );
+    }
+  }
+);
+
+
+export const fetchUserDocumentsById = createAsyncThunk<
+  UserDocumentsResponse, // Return type
+  UserDocumentsParams,   // Argument type
+  { rejectValue: string } // Rejection type
+>(
+  "admin/fetchUserDocumentsById",
+  async ({ userId, token }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get<UserDocumentsResponse>(
+        `${EndPoint}/support/documents/${userId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching user documents:", error);
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch user documents"
+      );
+    }
+  }
+);

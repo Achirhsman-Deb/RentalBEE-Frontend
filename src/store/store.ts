@@ -7,6 +7,7 @@ import feedbackReducer from "../slices/FeedbackSlice";
 import reportReducer from '../slices/ReportSlice'
 import documentReducer from '../slices/documentSlice'
 import notificationsReducer from '../slices/NotificationSlice'
+import SupportUserReducer from '../slices/SupportUserSlices'
 
 
 const carStore = configureStore(
@@ -20,6 +21,7 @@ const carStore = configureStore(
       reports: reportReducer,
       documents: documentReducer,
       notifications: notificationsReducer,
+      support_userDocs: SupportUserReducer
     },
   }
 );
