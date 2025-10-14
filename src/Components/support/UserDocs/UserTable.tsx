@@ -70,10 +70,12 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
 
   const handleViewDetails = async (userId: string, row: UserRow) => {
     if (!user?.idToken) return;
-    await dispatch(fetchUserDocumentsById({ userId, token: user.idToken }));
+
     setSelectedUser(row);
-    setDropdownIndex(null);
     setModalOpen(true);
+    setDropdownIndex(null);
+
+    dispatch(fetchUserDocumentsById({ userId, token: user.idToken }));
   };
 
   return (
