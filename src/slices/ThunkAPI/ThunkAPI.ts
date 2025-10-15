@@ -670,3 +670,49 @@ export const fetchUserDocumentsById = createAsyncThunk<
     }
   }
 );
+
+export const fetchSupportBookings = createAsyncThunk(
+  "support_bookings/fetchAll",
+  async (
+    {
+      status,
+      page,
+      limit,
+      token,
+    }: { status?: string; page?: number; limit?: number; token?: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const params: any = { page, limit };
+      if (status && status !== "ALL") params.status = status;
+
+      const response = await axios.get(`${EndPoint}/support/get-bookings`, {
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        params,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch bookings");
+    }
+  }
+);
+
+export const fetchSupportBookingById = createAsyncThunk(
+  "support_bookings/fetchById",
+  async ({ id, token }: { id: string; token?: string }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${EndPoint}/support/get-booking/${id}`, {
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+      });
+      return response.data.booking;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch booking details");
+    }
+  }
+);

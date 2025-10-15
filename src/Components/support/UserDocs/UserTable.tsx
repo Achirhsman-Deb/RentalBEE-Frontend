@@ -29,13 +29,30 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   const [dropdownIndex, setDropdownIndex] = useState<number | null>(null);
-  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number } | null>(
+    null
+  );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserRow | null>(null);
 
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+  // ✅ Proper Date Formatting Function
+  function formatDateTime(isoString: string) {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    let hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    const formattedHours = String(hours).padStart(2, "0");
+    return `${day}/${month}/${year} ${formattedHours}:${minutes} ${ampm}`;
+  }
+
+  // ✅ Define columns (accessor only)
   const columns = [
     { header: "Name", accessor: "name" },
     { header: "Email", accessor: "email" },
@@ -45,6 +62,7 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
     { header: "Created", accessor: "createdAt" },
   ];
 
+  // Handle dropdown positioning
   useEffect(() => {
     if (dropdownIndex !== null && buttonRefs.current[dropdownIndex]) {
       const rect = buttonRefs.current[dropdownIndex]!.getBoundingClientRect();
@@ -55,12 +73,10 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
     }
   }, [dropdownIndex]);
 
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownIndex(null);
       }
     };
@@ -68,13 +84,12 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // ✅ Handle “View Details” click
   const handleViewDetails = async (userId: string, row: UserRow) => {
     if (!user?.idToken) return;
-
     setSelectedUser(row);
     setModalOpen(true);
     setDropdownIndex(null);
-
     dispatch(fetchUserDocumentsById({ userId, token: user.idToken }));
   };
 
@@ -109,11 +124,21 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
               {data.map((row, rowIdx) => (
                 <tr key={row.userId} className="hover:bg-stone-100">
                   {columns.map((col, colIdx) => {
-                    const value = col.accessor.includes(".")
-                      ? col.accessor
-                          .split(".")
-                          .reduce((acc: any, key) => acc?.[key], row)
-                      : (row as any)[col.accessor];
+                    let value: any;
+
+                    if (col.accessor.includes(".")) {
+                      value = col.accessor
+                        .split(".")
+                        .reduce((acc: any, key) => acc?.[key], row);
+                    } else {
+                      value = (row as any)[col.accessor];
+                    }
+
+                    // ✅ Format createdAt column
+                    if (col.accessor === "createdAt" && value) {
+                      value = formatDateTime(value);
+                    }
+
                     return (
                       <td
                         key={colIdx}
@@ -156,6 +181,7 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
           </table>
         </div>
 
+        {/* Dropdown */}
         {dropdownIndex !== null &&
           dropdownPosition &&
           createPortal(

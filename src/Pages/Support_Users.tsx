@@ -4,8 +4,12 @@ import { AppDispatch, RootState } from "../store/store";
 import { fetchUsersWithDocuments } from "../slices/ThunkAPI/ThunkAPI";
 import StatusFilter from "../Components/support/UserDocs/StatusFilter";
 import UserTable from "../Components/support/UserDocs/UserTable";
+import { useNavigate } from "react-router-dom";
+import { useAlert } from "../Components/AlertProvider";
 
 const Support_Users = () => {
+  const navigate = useNavigate();
+  const myalert = useAlert();
   const dispatch = useDispatch<AppDispatch>();
   const { users, loading, totalPages, currentPage, error } =
     useSelector((state: RootState) => state.support_userDocs);
@@ -53,10 +57,21 @@ const Support_Users = () => {
     });
   }, [users, search]);
 
+  useEffect(() => {
+      if (user?.role !== "SUPPORT_AGENT") {
+        navigate("/");
+        myalert({
+          type: "error",
+          title: "Unauthorized Access",
+          subtitle: "You do not have permission to access this page.",
+        });
+      }
+  }, []);
+
   return (
     <>
       <div className="pl-5 text-black inline-flex items-center">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-1 sm:mt-4 sm:mb-4 md:mt-6 md:mb-6 lg:mt-6 lg:mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-1 sm:mt-4 sm:mb-4 md:mt-6 md:mb-6 lg:mt-6 lg:mb-6">
           Users
         </h1>
       </div>
