@@ -14,8 +14,8 @@ interface Props {
 const carDefaultImage = 'https://www.buycarsonline.in/Images/default_car.jpg'
 
 const statusLabels: Record<Booking['status'], { label: string; color: string }> = {
+  booked: { label: 'Booked', color: 'bg-white text-lime-200' },
   reserved: { label: 'Reserved', color: 'bg-white text-green' },
-  reservedBySA: { label: 'Reserved by SA', color: 'bg-white text-green' },
   serviceStarted: { label: 'Service started', color: 'bg-white text-[#1279C2]' },
   serviceProvided: { label: 'Service provided', color: 'bg-white text-black' },
   serviceFinished: { label: 'Booking finished', color: 'bg-white text-[#E09811]' },
@@ -23,7 +23,7 @@ const statusLabels: Record<Booking['status'], { label: string; color: string }> 
 };
 
 const BookingCard: React.FC<Props> = ({ booking, getBookingsFunc, OrderSummeryOpen }) => {
-  const status = statusLabels[booking.status];
+  const status = statusLabels[booking.status] || { label: booking.status, color: 'bg-white text-gray-500' };
   const nav = useNavigate();
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
@@ -85,7 +85,7 @@ const BookingCard: React.FC<Props> = ({ booking, getBookingsFunc, OrderSummeryOp
 
       {renderFeedbackButton()}
 
-      {booking.status == 'reserved' && (
+      {booking.status == 'reserved' || booking.status == 'booked' && (
         <div className="flex flex-wrap gap-2 mt-3">
           <div className='flex-1'>
             <Button type='outline' onClick={() => setIsCancelOpen(true)}>

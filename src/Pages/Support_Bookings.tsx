@@ -13,12 +13,14 @@ const Support_Bookings = () => {
   const navigate = useNavigate();
   const myalert = useAlert();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { bookings, loading, totalPages, currentPage, error, Cars } = useSelector(
+  const { loading, totalPages, currentPage, error, Cars } = useSelector(
     (state: RootState) => state.support_bookings
   );
+  const bookings = useSelector((state: RootState) => state.support_bookings.bookings);
+
   const { bookingDetails } = useSelector((state: RootState) => state.support_bookings);
 
-  const [status, setStatus] = useState<"ALL" | "PENDING" | "CONFIRMED" | "CANCELED" | "COMPLETED">("ALL");
+  const [status, setStatus] = useState<"ALL" | "BOOKED" | "RESERVED" | "SERVICESTARTED" | "COMPLETED" | "CANCELED">("ALL");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
@@ -26,11 +28,23 @@ const Support_Bookings = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   // Open modal and fetch booking details
-  const handleViewDetails = async (bookingId: string) => {
-    if (!user?.idToken) return;
-    setModalOpen(true);
-    dispatch(fetchSupportBookingById({ id: bookingId, token: user?.idToken }));
-  };
+  const handleViewDetails = (bookingId: string) => {
+      if (!user?.idToken) return;
+      setModalOpen(true);
+      dispatch(fetchSupportBookingById({ id: bookingId, token: user?.idToken }));
+  }
+
+  useEffect(() => {
+    if (!user?.idToken || loading) return;
+    dispatch(
+      fetchSupportBookings({
+        status,
+        page,
+        limit: pageSize,
+        token: user.idToken,
+      })
+    );
+  }, [dispatch, status, page, pageSize, user?.idToken]);
 
   useEffect(() => {
     if (user?.role !== "SUPPORT_AGENT") {
@@ -42,18 +56,6 @@ const Support_Bookings = () => {
       });
     }
   }, []);
-
-  useEffect(() => {
-    if (user?.idToken)
-      dispatch(
-        fetchSupportBookings({
-          status,
-          page,
-          limit: pageSize,
-          token: user.idToken,
-        })
-      );
-  }, [status, page, pageSize, user?.idToken]);
 
   // Filter logic
   const filteredBookings = useMemo(() => {
@@ -100,7 +102,7 @@ const Support_Bookings = () => {
         ) : error ? (
           <div className="text-center py-10 text-red-500">{error}</div>
         ) : (
-          <BookingsTable data={filteredBookings} onViewDetails={handleViewDetails}/>
+          <BookingsTable data={filteredBookings} onViewDetails={handleViewDetails} />
         )}
 
         {totalPages > 1 && (

@@ -115,8 +115,8 @@ type BookingApiItem = {
 };
 
 const statusMap: Record<string, BookingStatus> = {
+  BOOKED: 'booked',
   RESERVED: 'reserved',
-  RESERVEDBYSA: 'reservedBySA',
   SERVICESTARTED: 'serviceStarted',
   SERVICEPROVIDED: 'serviceProvided',
   SERVICEFINISHED: 'serviceFinished',

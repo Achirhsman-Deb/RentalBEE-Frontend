@@ -11,6 +11,7 @@ import Button from '../Components/Button';
 import OrderSummery from '../Modals/OrderSummery';
 
 const labelToStatusMap: Record<string, BookingStatus> = {
+  'Booked' : 'booked',
   'Reserved': 'reserved',
   'Service started': 'serviceStarted',
   'Service provided': 'serviceProvided',

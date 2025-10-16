@@ -1,4 +1,4 @@
-export type BookingStatus = 'reserved' | 'reservedBySA' | 'serviceStarted' | 'serviceProvided' | 'serviceFinished' | 'canceled';
+export type BookingStatus = 'booked' | 'reserved' | 'serviceStarted' | 'serviceProvided' | 'serviceFinished' | 'canceled';
 
 export interface Booking {
   id: string;

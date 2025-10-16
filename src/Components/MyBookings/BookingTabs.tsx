@@ -3,6 +3,7 @@ import DropDown from '../Inputs/DropDown';
 
 const tabs = [
   'All bookings',
+  'Booked',
   'Reserved',
   'Service started',
   'Service provided',

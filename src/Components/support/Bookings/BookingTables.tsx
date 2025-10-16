@@ -63,18 +63,14 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ data, onViewDetails }) =>
 
     // Close dropdown on outside click
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target as Node) &&
-                !buttonRefs.current.some((btn) => btn?.contains(event.target as Node))
-            ) {
-                setDropdownIndex(null);
-            }
+        const handleClick = (e: MouseEvent) => {
+          if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+            setDropdownIndex(null);
+          }
         };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+        document.addEventListener("mousedown", handleClick);
+        return () => document.removeEventListener("mousedown", handleClick);
+      }, []);
 
     return (
         <div className="overflow-x-auto max-w-full rounded-[8px] border border-gray-200">
@@ -165,4 +161,4 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ data, onViewDetails }) =>
     );
 };
 
-export default BookingsTable;
+export default React.memo(BookingsTable);

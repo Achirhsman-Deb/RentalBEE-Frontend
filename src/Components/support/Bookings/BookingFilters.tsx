@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 interface BookingFilterProps {
-  status: "ALL" | "PENDING" | "CONFIRMED" | "CANCELED" | "COMPLETED";
+  status: "ALL" | "BOOKED" | "RESERVED" | "SERVICESTARTED" | "COMPLETED" | "CANCELED";
   setStatus: React.Dispatch<
-    React.SetStateAction<
-      "ALL" | "PENDING" | "CONFIRMED" | "CANCELED" | "COMPLETED"
-    >
+    React.SetStateAction<"ALL" | "BOOKED" | "RESERVED" | "SERVICESTARTED" | "COMPLETED" | "CANCELED">
   >;
   pageSize: number;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
@@ -25,10 +23,11 @@ const BookingFilter: React.FC<BookingFilterProps> = ({
 }) => {
   const options: BookingFilterProps["status"][] = [
     "ALL",
-    "PENDING",
-    "CONFIRMED",
-    "CANCELED",
+    "BOOKED",
+    "RESERVED",
+    "SERVICESTARTED",
     "COMPLETED",
+    "CANCELED",
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,10 +61,11 @@ const BookingFilter: React.FC<BookingFilterProps> = ({
           {options.map((opt) => (
             <button
               key={opt}
-              className={`px-4 py-1.5 rounded-2xl text-sm font-medium transition-all duration-200 shadow-sm ${status === opt
+              className={`px-4 py-1.5 rounded-2xl text-sm font-medium transition-all duration-200 shadow-sm ${
+                status === opt
                   ? "bg-black text-white shadow-md"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
+              }`}
               onClick={() => setStatus(opt)}
             >
               {opt}
@@ -81,11 +81,12 @@ const BookingFilter: React.FC<BookingFilterProps> = ({
             onChange={(e) =>
               setStatus(
                 e.target.value as
-                | "ALL"
-                | "PENDING"
-                | "CONFIRMED"
-                | "CANCELED"
-                | "COMPLETED"
+                  | "ALL"
+                  | "BOOKED"
+                  | "RESERVED"
+                  | "SERVICESTARTED"
+                  | "COMPLETED"
+                  | "CANCELED"
               )
             }
           >

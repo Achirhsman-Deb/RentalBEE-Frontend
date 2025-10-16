@@ -214,6 +214,7 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
         <UserDetailsModal
           userDocuments={userDocuments}
           userInfo={{
+            id: selectedUser.userId,
             name: selectedUser.name,
             email: selectedUser.email,
             phoneNumber: selectedUser.phoneNumber,
