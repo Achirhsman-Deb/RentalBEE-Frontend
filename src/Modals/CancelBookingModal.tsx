@@ -28,32 +28,45 @@ const CancelBookingModal: React.FC<PropType> = ({ isOpen, onClose, bookingId, ge
       });
       return;
     }
+
     const data = {
       bookingId,
-      userId: User?.userId + "",
-      token: User?.idToken + ""
+      userId: User.userId,
+      token: User.idToken,
     };
 
     try {
-      await dispatch(cancelBooking(data)).unwrap();
-      showAlert({
-        type: "success",
-        title: "Cancellation successful",
-        subtitle: "Your booking has been cancelled",
-      });
-      onClose();
-      setTimeout(() => {
-        getBookingFunc();
-      }, 1000)
-    } catch (err: any) {
+      const response = await dispatch(cancelBooking(data)).unwrap();
 
+      if (response.immediateCancel) {
+        showAlert({
+          type: "success",
+          title: "Booking Cancelled",
+          subtitle: response.message || "Your booking has been cancelled successfully.",
+        });
+      } else if (response.requestSubmitted) {
+        showAlert({
+          type: "success",
+          title: "Cancellation Request Sent",
+          subtitle: response.message || "Your cancellation request has been sent for review.",
+        });
+      } else {
+        showAlert({
+          type: "success",
+          title: "Action Completed",
+          subtitle: response.message || "Cancellation processed successfully.",
+        });
+      }
+
+      onClose();
+      setTimeout(() => getBookingFunc(), 1000);
+    } catch (error: any) {
       showAlert({
         type: "error",
-        title: "Cancellation failed",
-        subtitle: `${err}. Bookings can only be canceled within 12 hours of being made.`,
+        title: "Cancellation Failed",
+        subtitle: error || "Failed to cancel booking. Please try again later.",
       });
       onClose();
-
     }
   };
 

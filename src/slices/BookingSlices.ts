@@ -15,9 +15,10 @@ export interface BookingState {
   bookings: Booking[];
   orderId: string | null;
 
-  cancelError: any;
+  cancelError: string | null;
   cancelSuccess: boolean;
   cancelLoading: boolean;
+  cancelResponse: any | null;
 
   selectedBooking: any | null;
   selectedLoading: boolean;
@@ -34,9 +35,11 @@ const initialState: BookingState = {
   success: false,
   bookings: [],
   orderId: null,
-  cancelError: "",
+
+  cancelError: null,
   cancelSuccess: false,
   cancelLoading: false,
+  cancelResponse: null,
 
   selectedBooking: null,
   selectedLoading: false,
@@ -55,10 +58,15 @@ const bookingSlice = createSlice({
       state.success = false;
       state.error = null;
     },
+    resetCancelStatus: (state) => {
+      state.cancelSuccess = false;
+      state.cancelError = null;
+      state.cancelResponse = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Confirm Reservation
+      // ✅ Confirm Reservation
       .addCase(confirmReservation.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -72,10 +80,11 @@ const bookingSlice = createSlice({
       .addCase(confirmReservation.rejected, (state, action) => {
         state.loading = false;
         state.success = false;
-        state.error = (action.payload as { message: string })?.message || "Something went wrong";
+        state.error =
+          (action.payload as { message: string })?.message || "Something went wrong";
       })
 
-      // Fetch Bookings
+      // ✅ Fetch Bookings
       .addCase(fetchBookings.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -89,22 +98,24 @@ const bookingSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // Cancel Booking
+      // ✅ Cancel Booking (fixed)
       .addCase(cancelBooking.pending, (state) => {
         state.cancelLoading = true;
-        state.cancelError = '';
+        state.cancelError = null;
         state.cancelSuccess = false;
+        state.cancelResponse = null;
       })
-      .addCase(cancelBooking.fulfilled, (state) => {
+      .addCase(cancelBooking.fulfilled, (state, action) => {
         state.cancelLoading = false;
         state.cancelSuccess = true;
+        state.cancelResponse = action.payload; // <-- store backend response
       })
       .addCase(cancelBooking.rejected, (state, action) => {
-        state.cancelError = action.payload || 'Failed to cancel booking';
         state.cancelLoading = false;
+        state.cancelError = (action.payload as string) || "Failed to cancel booking";
       })
 
-      // Get Booking Details
+      // ✅ Get Booking Details
       .addCase(getBookingDetails.pending, (state) => {
         state.selectedLoading = true;
         state.selectedError = null;
@@ -119,9 +130,10 @@ const bookingSlice = createSlice({
         state.selectedError = action.payload as string;
       })
 
-      //Edit Booking Details
+      // ✅ Edit Booking
       .addCase(editBooking.pending, (state) => {
         state.EditBookingLoading = true;
+        state.EditBookingError = null;
       })
       .addCase(editBooking.fulfilled, (state, action) => {
         state.EditBookingLoading = false;
@@ -129,10 +141,11 @@ const bookingSlice = createSlice({
       })
       .addCase(editBooking.rejected, (state, action) => {
         state.EditBookingLoading = false;
-        state.EditBookingError = action.payload+"" || 'Failed to Edit Booking';
+        state.EditBookingError =
+          (action.payload as string) || "Failed to edit booking";
       });
-},
+  },
 });
 
-export const { resetBookingStatus } = bookingSlice.actions;
+export const { resetBookingStatus, resetCancelStatus } = bookingSlice.actions;
 export default bookingSlice.reducer;

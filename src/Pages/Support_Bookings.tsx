@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { useAlert } from "../Components/AlertProvider";
@@ -13,12 +13,12 @@ const Support_Bookings = () => {
   const navigate = useNavigate();
   const myalert = useAlert();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { loading, totalPages, currentPage, error, Cars } = useSelector(
+  const { totalPages, currentPage, error, Cars } = useSelector(
     (state: RootState) => state.support_bookings
   );
   const bookings = useSelector((state: RootState) => state.support_bookings.bookings);
-
-  const { bookingDetails } = useSelector((state: RootState) => state.support_bookings);
+  const bookingDetails = useSelector((state: RootState) => state.support_bookings.bookingDetails);
+  const loading = useSelector((state: RootState) => state.support_bookings.loading);
 
   const [status, setStatus] = useState<"ALL" | "BOOKED" | "RESERVED" | "SERVICESTARTED" | "COMPLETED" | "CANCELED">("ALL");
   const [page, setPage] = useState(1);
@@ -28,23 +28,21 @@ const Support_Bookings = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   // Open modal and fetch booking details
-  const handleViewDetails = (bookingId: string) => {
-      if (!user?.idToken) return;
-      setModalOpen(true);
-      dispatch(fetchSupportBookingById({ id: bookingId, token: user?.idToken }));
-  }
+  const handleViewDetails = useCallback((bookingId: string) => {
+    if (!user?.idToken) return;
+    setModalOpen(true);
+    dispatch(fetchSupportBookingById({ id: bookingId, token: user?.idToken }));
+  }, [user?.idToken]);
+
+  const handleStatusUpdate = useCallback(() => {
+    if (!user?.idToken || loading) return;
+    dispatch(fetchSupportBookings({ status, page, limit: pageSize, token: user.idToken }));
+  }, [dispatch, user?.idToken, status, page, pageSize]);
+
 
   useEffect(() => {
-    if (!user?.idToken || loading) return;
-    dispatch(
-      fetchSupportBookings({
-        status,
-        page,
-        limit: pageSize,
-        token: user.idToken,
-      })
-    );
-  }, [dispatch, status, page, pageSize, user?.idToken]);
+    handleStatusUpdate();
+  }, [status, page, pageSize, user?.idToken]);
 
   useEffect(() => {
     if (user?.role !== "SUPPORT_AGENT") {
@@ -132,6 +130,8 @@ const Support_Bookings = () => {
         <UserBookingDetailsModal
           bookingDetails={bookingDetails}
           onClose={() => setModalOpen(false)}
+          onStatusUpdate={handleStatusUpdate}
+          onLoading={loading}
         />
       )}
     </>

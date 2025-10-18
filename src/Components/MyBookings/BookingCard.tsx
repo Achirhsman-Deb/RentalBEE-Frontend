@@ -85,7 +85,7 @@ const BookingCard: React.FC<Props> = ({ booking, getBookingsFunc, OrderSummeryOp
 
       {renderFeedbackButton()}
 
-      {booking.status == 'reserved' || booking.status == 'booked' && (
+      {booking.status == 'booked' && (
         <div className="flex flex-wrap gap-2 mt-3">
           <div className='flex-1'>
             <Button type='outline' onClick={() => setIsCancelOpen(true)}>
@@ -105,6 +105,14 @@ const BookingCard: React.FC<Props> = ({ booking, getBookingsFunc, OrderSummeryOp
       <FeedBackModal isOpen={isFeedbackOpen} onClose={HandleFeedbackClose} Data={FeedBackData} />
       {/* cancelBooking */}
       <CancelBookingModal isOpen={isCancelOpen} onClose={() => setIsCancelOpen(false)} bookingId={booking.id} getBookingFunc={getBookingsFunc} />
+
+      {booking.status === 'reserved' && (
+        <div className='flex-1 mt-3'>
+          <Button type='outline' onClick={() => setIsCancelOpen(true)}>
+            Cancel Request
+          </Button>
+        </div>
+      )}
 
       {booking.status != 'canceled' &&
         <Button

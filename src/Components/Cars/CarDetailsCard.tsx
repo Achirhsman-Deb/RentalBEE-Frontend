@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAlert } from "../AlertProvider";
 import { RootState } from "../../store/store";
+import { AirVent, Armchair, Cog, Fuel, ReceiptIndianRupee, TruckElectric } from "lucide-react";
 
 type CarStatus =
   | "reserved"
@@ -119,22 +120,22 @@ const CarDetailsCard: React.FC<CarDetailsCardProps> = ({
       {/* Features grid */}
       <div className="grid grid-cols-2 gap-2 justify-between">
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.gearBoxType}</p>
+          <p className="text-sm flex flex-row items-center gap-x-2"><Cog size={15}/>{car.gearBoxType}</p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.engineCapacity}</p>
+          <p className="text-sm flex flex-row items-center gap-x-2"><Fuel size={15}/>{car.engineCapacity}</p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.fuelType}</p>
+          <p className="text-sm flex flex-row items-center gap-x-2">{car.fuelType == "DIESEL" ? <Fuel size={15}/>:<TruckElectric size={15}/>}{car.fuelType}</p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.passengerCapacity} seats</p>
+          <p className="text-sm flex flex-row items-center gap-x-2"><Armchair size={15}/>{car.passengerCapacity} seats</p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.fuelConsumption}</p>
+          <p className="text-sm flex flex-row items-center gap-x-2"><ReceiptIndianRupee size={15}/>{car.fuelConsumption}</p>
         </div>
         <div className="flex items-center gap-2">
-          <p className="text-sm">{car.climateControlOption}</p>
+          <p className="text-sm flex flex-row items-center gap-x-2"><AirVent size={15}/>{car.climateControlOption}</p>
         </div>
       </div>
 
@@ -194,8 +195,9 @@ const CarDetailsCard: React.FC<CarDetailsCardProps> = ({
           </div>
         </>
       )}
+      
 
-      {!showBookingOptions && car.LocationDetails && (
+      {user?.role === "CLIENT" && !showBookingOptions && car.LocationDetails && (
         <div>
           <hr className="border-t border-gray-300 mb-4 mt-4 w-full" />
           <div className="flex flex-row items-center justify-around w-full">

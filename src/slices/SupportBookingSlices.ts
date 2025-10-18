@@ -25,9 +25,9 @@ interface DetailedBooking {
   _id: string;
   bookingDate: string;
   status: string;
-  totalPrice: number;
   createdAt: string;
   carId: {
+    _id: string;
     model: string;
     images: string[];
     category: string;
@@ -35,6 +35,8 @@ interface DetailedBooking {
     fuelType: string;
     gearBoxType: string;
     passengerCapacity: number;
+    carRating: any;
+    pricePerDay:string
   };
   clientId: {
     firstName: string;
@@ -43,6 +45,8 @@ interface DetailedBooking {
     phoneNumber: string;
     address: string;
   };
+  pickupDateTime: string;
+  dropoffDateTime: string;
   pickupLocationId: {
     locationName: string;
     locationAddress: string;
