@@ -51,6 +51,7 @@ interface DetailedBooking {
     locationName: string;
     locationAddress: string;
   };
+  cancelRequest?: any;
 }
 
 interface CarDetails {
@@ -186,7 +187,10 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
           { label: "Reserve Vehicle", status: "RESERVED", type: "filled" },
         ];
       case "RESERVED":
-        return [{ label: "Start Service", status: "SERVICESTARTED", type: "filled" }];
+        return [
+          { label: "Start Service", status: "SERVICESTARTED", type: "filled" },
+          { label: "Cancel Booking", status: "CANCELED", type: "outline" }
+        ];
       case "SERVICESTARTED":
         return [{ label: "Mark as Completed", status: "SERVICEPROVIDED", type: "filled" }];
       default:
@@ -271,15 +275,25 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
 
               <div className="flex-1 flex flex-col gap-y-4 text-sm text-gray-700 border-2 rounded-lg p-3">
                 <div>
-                  <h3 className="font-semibold text-base mb-1 text-gray-900">
+                  <h3 className="font-semibold text-base mb-1 text-gray-900 flex flex-row">
                     Status:
-                    <span
-                      className={`ml-2 px-2 py-1 rounded-md text-sm font-medium ${getStatusColor(
-                        bookingDetails.status
-                      )}`}
-                    >
-                      {bookingDetails.status}
-                    </span>
+                    <div className="flex flex-row gap-x-1">
+                      <span
+                        className={`ml-2 px-2 py-1 rounded-md text-sm font-medium ${getStatusColor(
+                          bookingDetails.status
+                        )}`}
+                      >
+                        {bookingDetails.status}
+                      </span>
+
+                      {bookingDetails.cancelRequest && (
+                        <span
+                          className={`ml-2 px-2 py-1 rounded-md text-sm font-medium text-red-600 bg-red-100`}
+                        >
+                          CANCEL REQUESTED
+                        </span>
+                      )}
+                    </div>
                   </h3>
 
                   <h3 className="font-semibold text-base mb-1 text-gray-900">
@@ -296,7 +310,7 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
                       className="text-gray-500 underline font-semibold hover:text-black flex flex-row gap-x-1 items-center"
                     >
                       {bookingDetails.pickupLocationId.locationName}
-                      <ExternalLink size={15}/>
+                      <ExternalLink size={15} />
                     </a>
                   </p>
                   <p className="flex flex-row gap-x-2">
@@ -310,7 +324,7 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
                       className="text-gray-500 underline font-semibold hover:text-black flex flex-row gap-x-1 items-center"
                     >
                       {bookingDetails.dropoffLocationId.locationName}
-                      <ExternalLink size={15}/>
+                      <ExternalLink size={15} />
                     </a>
                   </p>
                 </div>

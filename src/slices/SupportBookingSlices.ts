@@ -55,6 +55,7 @@ interface DetailedBooking {
     locationName: string;
     locationAddress: string;
   };
+  cancelRequest:any
 }
 
 interface CarOption {
@@ -106,6 +107,8 @@ const supportBookingSlice = createSlice({
         state.currentPage = action.payload.currentPage;
         state.totalPages = action.payload.totalPages;
         state.Cars = action.payload.Cars;
+
+        console.log(state.bookings)
       })
       .addCase(fetchSupportBookings.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
