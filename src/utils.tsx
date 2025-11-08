@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 
-export const ApiEndPoint = "http://localhost:5000"
-export const EndPoint = "http://localhost:5000"
+export const ApiEndPoint = "https://rentalbee-backend.onrender.com"
+export const EndPoint = "https://rentalbee-backend.onrender.com"
 
 export const getPopularCars = async () => {
     try {
