@@ -95,7 +95,7 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ data, onViewDetails }) =>
                                 {b.carId ? `${b.carId.model} (${b.carId.category})` : "N/A"}
                             </td>
                             <td className="px-4 py-3 border-b">{formatDateTime(b.createdAt)}</td>
-                            <td className="px-4 py-3 border-b">{b.status}{b.cancelRequest && " (Cancel Request)"}</td>
+                            <td className="px-4 py-3 border-b">{b.status}{b.cancelRequest.status != "NONE" && " (Cancel Request)"}</td>
                             <td className="px-4 py-3 text-center border-b border-[#DCDCDD]">
                                 <button
                                     ref={(el) => { buttonRefs.current[idx] = el }}
