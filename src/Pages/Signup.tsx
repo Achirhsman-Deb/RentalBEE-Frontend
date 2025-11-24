@@ -10,7 +10,7 @@ import { resetSignUpConf } from "../slices/AuthSlices";
 import { RootState } from "../store/store";
 import type { AppDispatch } from "../store/store";
 import ReCAPTCHA from "react-google-recaptcha";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 
 interface Errors {
   firstName: string;
@@ -171,7 +171,7 @@ const Signup: React.FC = () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`${EndPoint}/auth/send-otp`, {
+      const res = await fetch(`${ApiEndPoint}/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, captchaToken: token, type: "Registration" })

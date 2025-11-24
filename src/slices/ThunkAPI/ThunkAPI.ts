@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { Booking, BookingStatus, EditBookingPayload } from "../../types/BookingTypes";
-import { EndPoint } from "../../utils";
+import { ApiEndPoint } from "../../utils";
 import { ExportReportPayload, ReportData, ReportFilters } from "../../types/ReportTypes";
 import { AppNotification } from "../NotificationSlice";
 
@@ -128,7 +128,7 @@ export const confirmReservation = createAsyncThunk(
   async (data: ReservationData, { rejectWithValue }) => {
     try {
       const { token, ...bookingData } = data;
-      const response = await axios.post(EndPoint + "/bookings/", bookingData, {
+      const response = await axios.post(ApiEndPoint + "/bookings/", bookingData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -154,7 +154,7 @@ export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
   async ({ UserId, token }, { rejectWithValue }) => {
     try {
       const res = await axios.get<{ content: BookingApiItem[] }>(
-        EndPoint + `/bookings/${UserId}`, {
+        ApiEndPoint + `/bookings/${UserId}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
@@ -191,7 +191,7 @@ export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
 
 export const getLocations = createAsyncThunk("locations/getLocations", async (_, thunkAPI) => {
   try {
-    const response = await axios.get(EndPoint + "/home/locations");
+    const response = await axios.get(ApiEndPoint + "/home/locations");
     return response.data;
   } catch (error) {
     const err = error as AxiosError;
@@ -203,7 +203,7 @@ export const getCarDetailsById = createAsyncThunk(
   "car/getCarDetailsById",
   async (carId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(EndPoint + `/cars/${carId}`);
+      const response = await axios.get(ApiEndPoint + `/cars/${carId}`);
       return response.data;
     } catch (error) {
       const err = error as AxiosError;
@@ -225,7 +225,7 @@ export const registerUser = createAsyncThunk('auth/sign-up',
   async (data: RegistrationData, { rejectWithValue }) => {
     try {
       // console.log(data);
-      const response = await axios.post(EndPoint + '/auth/sign-up', data);
+      const response = await axios.post(ApiEndPoint + '/auth/sign-up', data);
       // console.log(response.data.message);
       return response.data.message;
     } catch (error) {
@@ -243,7 +243,7 @@ interface LoginData {
 
 export const loginUser = createAsyncThunk("auth/sign-in", async (data: LoginData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(EndPoint + "/auth/sign-in", data);
+    const response = await axios.post(ApiEndPoint + "/auth/sign-in", data);
     console.log(response)
     return response.data.body;
   } catch (error) {
@@ -273,9 +273,9 @@ interface ChangePasswordData {
 
 export const changePassword = createAsyncThunk("auth/change-passsword", async (data: ChangePasswordData, { rejectWithValue }) => {
   try {
-    // console.log(EndPoint + "/users/" + data.id + "/change-password");
+    // console.log(ApiEndPoint + "/users/" + data.id + "/change-password");
     const response = await axios.put(
-      EndPoint + "/users/" + data.id + "/change-password",
+      ApiEndPoint + "/users/" + data.id + "/change-password",
       { currentPassword: data.currentPassword, newPassword: data.newPassword },
       {
         headers: {
@@ -299,7 +299,7 @@ interface PersonalInfoGetData {
 export const personalInfoGet = createAsyncThunk("auth/personal-info", async (data: PersonalInfoGetData, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      EndPoint + `/user/personal-info/${data.id}`,
+      ApiEndPoint + `/user/personal-info/${data.id}`,
       {
         headers: {
           'Content-Type': 'application/json',
@@ -349,7 +349,7 @@ export const personalInfoPut = createAsyncThunk(
       console.log(formData)
 
       const response = await axios.put(
-        `${EndPoint}/user/personal-info/${data.id}`,
+        `${ApiEndPoint}/user/personal-info/${data.id}`,
         formData,
         {
           headers: {
@@ -374,7 +374,7 @@ export const fetchBookedDates = createAsyncThunk<
   "car/fetchBookedDates",
   async (carId, { rejectWithValue }) => {
     try {
-      const response = await axios.get<{ content: string[] }>(`${EndPoint}/cars/${carId}/booked-days`);
+      const response = await axios.get<{ content: string[] }>(`${ApiEndPoint}/cars/${carId}/booked-days`);
       return response.data.content;
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
@@ -387,7 +387,7 @@ export const postFeedback = createAsyncThunk(
   "feedback/postFeedback",
   async (feedbackData: FeedbackPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${EndPoint}/feedbacks`, feedbackData, {
+      const response = await axios.post(`${ApiEndPoint}/feedbacks`, feedbackData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${feedbackData.token}`
@@ -407,7 +407,7 @@ export const fetchReportData = createAsyncThunk<ReportData[], ReportFilters, { r
   async (filters, { rejectWithValue }) => {
     try {
       const { token, ...queryParams } = filters;
-      const response = await axios.get<{ content: ReportData[] }>(`${EndPoint}/reports`, {
+      const response = await axios.get<{ content: ReportData[] }>(`${ApiEndPoint}/reports`, {
         params: queryParams,
         headers: {
           "Content-Type": "application/json",
@@ -426,7 +426,7 @@ export const exportReport = createAsyncThunk<string, ExportReportPayload, { reje
   async ({ filters, extension }, { rejectWithValue }) => {
     try {
       const { token, ...queryParams } = filters;
-      const response = await axios.post<{ url: string }>(`${EndPoint}/reports/${extension}`, queryParams, {
+      const response = await axios.post<{ url: string }>(`${ApiEndPoint}/reports/${extension}`, queryParams, {
         headers: {
           "Content-Type": "application/json",
           'Authorization': `Bearer ${filters.token}`
@@ -444,7 +444,7 @@ export const cancelBooking = createAsyncThunk(
   async (cancelData: cancelDataType, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${EndPoint}/bookings/cancel/${cancelData.bookingId}`,
+        `${ApiEndPoint}/bookings/cancel/${cancelData.bookingId}`,
         { userId: cancelData.userId },
         {
           headers: {
@@ -468,7 +468,7 @@ export const getBookingDetails = createAsyncThunk(
   async ({ bookingId, token }: BookingDetailsPayload, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${EndPoint}/bookings/details/${bookingId}`,
+        `${ApiEndPoint}/bookings/details/${bookingId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -491,7 +491,7 @@ export const editBooking = createAsyncThunk(
   async ({ bookingId, userId, token, updatedData }: EditBookingPayload, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${EndPoint}/bookings/edit/${bookingId}`,
+        `${ApiEndPoint}/bookings/edit/${bookingId}`,
         {
           userId,
           ...updatedData
@@ -518,7 +518,7 @@ export const fetchClientReviews = createAsyncThunk(
   ) => {
     try {
       const response = await axios.get(
-        `${EndPoint}/cars/${carId}/client-review`,
+        `${ApiEndPoint}/cars/${carId}/client-review`,
         {
           params: { page, size, sort, direction },
         }
@@ -545,7 +545,7 @@ export const uploadDocumentThunk = createAsyncThunk(
     formData.append("document", file);
 
     const response = await axios.put(
-      `${EndPoint}/user/document/upload/${userId}/${docType}`,
+      `${ApiEndPoint}/user/document/upload/${userId}/${docType}`,
       formData,
       {
         headers: {
@@ -565,7 +565,7 @@ export const getDocumentsThunk = createAsyncThunk(
     userId,
     token,
   }: { userId: string; token: string }) => {
-    const response = await axios.get(`${EndPoint}/user/document/${userId}`, {
+    const response = await axios.get(`${ApiEndPoint}/user/document/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -580,7 +580,7 @@ export const fetchNotifications = createAsyncThunk<
   { rejectValue: string }
 >("notifications/fetchNotifications", async (token, { rejectWithValue }) => {
   try {
-    const res = await axios.get<{ success: boolean; notifications: AppNotification[] }>(`${EndPoint}/notifications/`, {
+    const res = await axios.get<{ success: boolean; notifications: AppNotification[] }>(`${ApiEndPoint}/notifications/`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -600,7 +600,7 @@ export const ReadNotifications = createAsyncThunk<
   { rejectValue: string }
 >("notifications/readNotification", async (data, { rejectWithValue }) => {
   try {
-    const res = await axios.patch<{ success: boolean; notification: AppNotification }>(`${EndPoint}/notifications/${data.NotiId}/read`, {}, {
+    const res = await axios.patch<{ success: boolean; notification: AppNotification }>(`${ApiEndPoint}/notifications/${data.NotiId}/read`, {}, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${data.token}`,
@@ -623,7 +623,7 @@ export const fetchUsersWithDocuments = createAsyncThunk<
   async ({ status = "ALL", page = 1, limit = 10, token }, { rejectWithValue }) => {
     try {
       const response = await axios.get<FetchUsersResponse>(
-        `${EndPoint}/support/documents`,
+        `${ApiEndPoint}/support/documents`,
         {
           params: { status, page, limit },
           headers: {
@@ -653,7 +653,7 @@ export const fetchUserDocumentsById = createAsyncThunk<
   async ({ userId, token }, { rejectWithValue }) => {
     try {
       const response = await axios.get<UserDocumentsResponse>(
-        `${EndPoint}/support/documents/${userId}`,
+        `${ApiEndPoint}/support/documents/${userId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -686,7 +686,7 @@ export const fetchSupportBookings = createAsyncThunk(
       const params: any = { page, limit };
       if (status && status !== "ALL") params.status = status;
 
-      const response = await axios.get(`${EndPoint}/support/get-bookings`, {
+      const response = await axios.get(`${ApiEndPoint}/support/get-bookings`, {
         headers: { 
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}` 
@@ -704,7 +704,7 @@ export const fetchSupportBookingById = createAsyncThunk(
   "support_bookings/fetchById",
   async ({ id, token }: { id: string; token?: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${EndPoint}/support/get-booking/${id}`, {
+      const response = await axios.get(`${ApiEndPoint}/support/get-booking/${id}`, {
         headers: { 
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`

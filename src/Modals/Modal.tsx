@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CarImageViewer from "../Components/Cars/CarImageViewer";
 import CarDetailsCard from "../Components/Cars/CarDetailsCard";
 import FeedbackList from "../Components/Cars/FeedbackList";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 import { fetchBookedDates } from "../slices/ThunkAPI/ThunkAPI";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, car }) => {
   useEffect(() => {
     if (car?.carId) {
       setLoading(true);
-      fetch(`${EndPoint}/cars/${car.carId}`)
+      fetch(`${ApiEndPoint}/cars/${car.carId}`)
         .then((response) => response.json())
         .then((data) => {
           setCarDetails(data);

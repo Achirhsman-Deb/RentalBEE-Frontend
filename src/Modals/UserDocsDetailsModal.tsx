@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FileText, X } from "lucide-react";
 import axios from "axios";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store/store";
 import { fetchUserDocumentsById } from "../slices/ThunkAPI/ThunkAPI";
@@ -62,7 +62,7 @@ const UserDetailsModal: React.FC<Props> = ({
       setLoadingVerify(true);
 
       const res = await axios.put(
-        `${EndPoint}/support/documents/${userInfo.id}`,
+        `${ApiEndPoint}/support/documents/${userInfo.id}`,
         {
           documentType:
             confirmModal.documentType === "AadhaarCard"

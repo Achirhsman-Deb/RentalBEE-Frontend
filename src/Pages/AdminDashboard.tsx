@@ -14,7 +14,7 @@ import {
   ReportData,
   SelectedDate,
 } from "../types/ReportTypes";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 
 export default function AdminDashboard() {
 
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
       setLoadlocation(true);
       try {
         const response = await axios.get(
-          `${EndPoint}/home/locations`
+          `${ApiEndPoint}/home/locations`
         );
         setLocations(response.data.content);
         setLoadlocation(false);

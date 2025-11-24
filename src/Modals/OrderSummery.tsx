@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useAlert } from '../Components/AlertProvider';
 import { AppDispatch, RootState } from "../store/store";
-import { EndPoint } from '../utils';
+import { ApiEndPoint } from '../utils';
 import CarImageViewer from '../Components/Cars/CarImageViewer';
 import LazyCarDetailLoader from '../Components/Cars/LazyCarDetailSkeleton';
 import { getBookingDetails, getLocations } from '../slices/ThunkAPI/ThunkAPI';
@@ -84,7 +84,7 @@ const OrderSummery: React.FC<ModalProps> = ({ onClose, isOpen, Details }) => {
     useEffect(() => {
         if (Details?.carId) {
             setLoading(true);
-            fetch(`${EndPoint}/cars/${Details.carId}`)
+            fetch(`${ApiEndPoint}/cars/${Details.carId}`)
                 .then((response) => response.json())
                 .then((data) => {
                     setCarDetails(data);

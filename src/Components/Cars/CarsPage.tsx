@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Car } from "./CarCard";
 import axios from "axios";
 import LazyCarCard from "./LazyCarCard";
-import { EndPoint } from "../../utils";
+import { ApiEndPoint } from "../../utils";
 import CarPage from "./CarPage";
 import Pagination from "../Pagination";
 
@@ -26,7 +26,7 @@ const CarsPage = ({ carFilter, pageSizeReady, pageSize }: any) => {
         page: page.toString(),
       }).toString();
 
-      const url = `${EndPoint}/cars?${params}`;
+      const url = `${ApiEndPoint}/cars?${params}`;
       const res = await axios.get(url);
 
       if (res.status !== 200) throw new Error("Failed to fetch cars");

@@ -4,8 +4,8 @@ import DropDown from "./Inputs/DropDown";
 import DualHandleSlider from "./Inputs/DualHandleSlider";
 import { FilterFormData, Location } from "../types/types";
 import { useLocation, useNavigate } from "react-router-dom";
-import { EndPoint } from "../utils";
 import { format } from "date-fns";
+import { ApiEndPoint } from "../utils";
 
 
 const gearboxTypes = [
@@ -31,7 +31,7 @@ const categories = [
 ]
 async function fetchLocations(updateFun: (locations: Location[]) => void) {
     try {
-        const response = await fetch(`${EndPoint}/home/locations`);
+        const response = await fetch(`${ApiEndPoint}/home/locations`);
         if (!response.ok) throw new Error('Failed to fetch locations');
         const data = await response.json();
         updateFun(data.content);

@@ -3,7 +3,6 @@ import FAQSection from '../Components/Home/FAQSection';
 import AboutUs from '../Components/Home/AboutUs/AboutUs';
 import FilterCars from '../Components/FilterCars';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getPopularCars } from '../utils';
 import Button from '../Components/Button';
 import CarCard, { Car } from '../Components/Cars/CarCard';
 import LazyCarCard from '../Components/Cars/LazyCarCard';
@@ -15,8 +14,8 @@ import { useAlert } from '../Components/AlertProvider';
 import { personalInfoGet } from '../slices/ThunkAPI/ThunkAPI';
 import { setServiceLocationInfo } from '../slices/serviceLocationSlice';
 import LocationSection from '../Components/Home/Location';
-import { EndPoint } from '../utils';
-import axios from 'axios';
+import { ApiEndPoint } from '../utils';
+import axios, { AxiosError } from 'axios';
 
 
 export type InitialFilterType = {
@@ -54,6 +53,7 @@ const fallbackLocations: Location[] = [];
 
 const Home: React.FC = () => {
   const [carFilter, setCarFilter] = useState<InitialFilterType | "">("");
+  const navigate = useNavigate();
   const location = useLocation();
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedCar, setSelectedCar] = useState<Car>();
@@ -65,6 +65,40 @@ const Home: React.FC = () => {
   const [loggedin, setloggedin] = useState<boolean>(false);
   const myAlert = useAlert();
   const dispatch = useDispatch<AppDispatch>();
+
+  const handleBookClick = (car: Car) => {
+    setSelectedCar(car);
+    if (loggedin)
+      navigate(`/cars/car-booking/${car.carId}`);
+    else
+      myAlert(
+        {
+          type: "error",
+          title: "You are not logged in!",
+          subtitle: "To continue booking a car, you need to log in or create an account",
+          buttons: [
+
+            <Button type={"outline"} onClick={() => { }} >Cancel</Button>, <Button type={"filled"} onClick={() => navigate('/login')}>Log in</Button>]
+        }
+
+      )
+  };
+
+  const handleDetailsClick = (car: Car) => {
+    console.log("Car details:", car);
+    setSelectedCar(car);
+    setModalOpen(true)
+  };
+
+  const getPopularCars = async () => {
+    try {
+      const response = await axios.get(ApiEndPoint + "/cars/popular");
+      return response.data.content;
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
+      console.log(err.response?.data?.error || "Unknown Error");
+    }
+  };
   useEffect(() => {
     if (user) {
       const userId = user.userId;
@@ -81,7 +115,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const locationResponse = await axios.get(`${EndPoint}/home/locations`);
+        const locationResponse = await axios.get(`${ApiEndPoint}/home/locations`);
 
         const locationContent = locationResponse.data?.content;
 
@@ -127,25 +161,6 @@ const Home: React.FC = () => {
     return () => window.removeEventListener("resize", updatePageSize);
   });
 
-  const handleBookClick = (car: Car) => {
-    setSelectedCar(car);
-    // setModalOpen(true);
-    if (loggedin)
-      navigate(`/cars/car-booking/${car.carId}`);
-    else
-      myAlert(
-        {
-          type: "error",
-          title: "You are not logged in!",
-          subtitle: "To continue booking a car, you need to log in or create an account",
-          buttons: [
-
-            <Button type={"outline"} onClick={() => { }} >Cancel</Button>, <Button type={"filled"} onClick={() => navigate('/login')}>Log in</Button>]
-        }
-
-      )
-  };
-
   useEffect(() => {
     async function fetchPopularCars() {
       try {
@@ -157,13 +172,6 @@ const Home: React.FC = () => {
     }
     fetchPopularCars();
   }, []);
-  const handleDetailsClick = (car: Car) => {
-    console.log("Car details:", car);
-    // Redirect or open modal logic
-    setSelectedCar(car);
-    setModalOpen(true)
-  };
-  const navigate = useNavigate();
 
   const MainContent = () => (
     <>

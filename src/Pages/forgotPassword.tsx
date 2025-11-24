@@ -5,7 +5,7 @@ import { useAlert } from "../Components/AlertProvider";
 import InputField from "../Components/InputField";
 import PasswordField from "../Components/PasswordField";
 import ReCAPTCHA from "react-google-recaptcha";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
@@ -163,7 +163,7 @@ const ForgotPassword: React.FC = () => {
         if (!token) return;
 
         try {
-            const res = await fetch(`${EndPoint}/auth/send-otp`, {
+            const res = await fetch(`${ApiEndPoint}/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: formData.email, captchaToken: token, type: "ForgotPassword" })
@@ -221,7 +221,7 @@ const ForgotPassword: React.FC = () => {
         //change pass dispatch
 
         try {
-            const response = await axios.post(`${EndPoint}/auth/forgot-pass`,
+            const response = await axios.post(`${ApiEndPoint}/auth/forgot-pass`,
                 {
                     email: formData.email,
                     otp: formData.otp,

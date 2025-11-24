@@ -4,7 +4,7 @@ import Button from "../Components/Button";
 import Modal from "./Modal";
 import OrderSummeryPrices from "../Components/MyBookings/OrderSummeryPrices";
 import { useAlert } from "../Components/AlertProvider";
-import { EndPoint } from "../utils";
+import { ApiEndPoint } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
 import { fetchSupportBookingById } from "../slices/ThunkAPI/ThunkAPI";
@@ -202,7 +202,7 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
     try {
       setUpdating(true);
       const { data } = await axios.post(
-        `${EndPoint}/support/reservations/${bookingDetails._id}`,
+        `${ApiEndPoint}/support/reservations/${bookingDetails._id}`,
         { status: newStatus },
         {
           headers: {
