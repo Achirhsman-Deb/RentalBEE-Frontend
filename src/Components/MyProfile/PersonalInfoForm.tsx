@@ -56,7 +56,7 @@ const PersonalInfoForm = () => {
 
   useEffect(() => {
     const func = async () => {
-      await dispatch(personalInfoGet({ id: user?.userId + "", token: user?.idToken + "" }));
+      await dispatch(personalInfoGet({ id: user?.userId + ""}));
     }
     func();
   }, []);
@@ -178,7 +178,6 @@ const PersonalInfoForm = () => {
 
     const data: PersonalInfoPutData = {
       id: user?.userId + "",
-      token: user?.idToken + "",
       firstName: formData.firstName,
       lastName: formData.lastName,
       phoneNumber: formData.phoneNumber,

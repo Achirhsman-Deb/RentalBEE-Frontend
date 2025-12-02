@@ -176,6 +176,7 @@ const Signup: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, captchaToken: token, type: "Registration" })
       });
+      console.log(res);
 
       if (res.ok) {
         setOtpSent(true);

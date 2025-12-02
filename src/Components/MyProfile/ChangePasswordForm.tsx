@@ -19,8 +19,7 @@ const ChangePasswordForm = () => {
   const myAlert = useAlert();
   const [showAlert, setShowAlert] = useState(false);
   useEffect(() => {
-    console.log(passwordError);
-    if (passwordError.toLowerCase().includes("incorrect") || passwordError.toLowerCase().includes("requirements")) {
+    if (passwordError?.toLowerCase().includes("incorrect") || passwordError?.toLowerCase().includes("requirements")) {
       setError(passwordError);
     } else {
       setError("");
@@ -61,7 +60,7 @@ const ChangePasswordForm = () => {
     e.preventDefault();
     validatePasswords(currentPassword, newPassword);
     if (typeof user !== "string") {
-      await dispatch(changePassword({ id: user.userId, currentPassword: currentPassword, newPassword: newPassword, token: user.idToken || "" }));
+      await dispatch(changePassword({ id: user.userId, currentPassword: currentPassword, newPassword: newPassword}));
     } else {
       setError("User information is missing.");
     }

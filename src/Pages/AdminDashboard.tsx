@@ -29,8 +29,6 @@ export default function AdminDashboard() {
   const [showNoRecordsMessage, setShowNoRecordsMessage] =
     useState<boolean>(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
-
-  const token = useSelector((state: RootState) => state.auth.user?.idToken);
   const reports = useSelector((state: RootState) => state.reports.data);
   const { user } = useSelector((state: RootState) => state.auth);
   const loadingreports = useSelector(
@@ -42,7 +40,6 @@ export default function AdminDashboard() {
     dateFrom: "",
     dateTo: "",
     locationId: "",
-    token: user?.idToken + "",
   });
   const [dates, setDates] = useState<SelectedDate>({
     pickupDate: null,

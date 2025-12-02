@@ -106,14 +106,14 @@ const EditBooking: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (!user?.idToken || !bookingId) return;
+        if (!user?.userId || !bookingId) return;
 
         if (reduxLocations.length === 0) {
             dispatch(getLocations())
                 .catch((err) => console.error('Error fetching locations:', err));
         }
 
-        dispatch(getBookingDetails({ bookingId, token: user.idToken }))
+        dispatch(getBookingDetails({ bookingId }))
             .unwrap()
             .then((data) => {
                 const { pickupLocation, dropoffLocation, bookingPeriod, car } = data;
@@ -159,7 +159,7 @@ const EditBooking: React.FC = () => {
                     subtitle: err?.message || 'Failed to fetch booking details. Please try again.',
                 });
             });
-    }, [bookingId, user?.idToken, reduxLocations, generateDateRange, getLocationNameById]);
+    }, [bookingId, user?.userId, reduxLocations, generateDateRange, getLocationNameById]);
 
     useEffect(() => {
         if (!carDetails) return;
@@ -173,7 +173,7 @@ const EditBooking: React.FC = () => {
 
 
     const confirmEdit = async () => {
-        if (!user?.idToken || !bookingId) return;
+        if (!user?.userId || !bookingId) return;
 
         // Set pickup datetime
         const pickupDateTime = new Date(dates.pickupDate!);
@@ -206,7 +206,6 @@ const EditBooking: React.FC = () => {
             await dispatch(editBooking({
                 bookingId,
                 userId: user.userId + "",
-                token: user.idToken + "",
                 updatedData
             })).unwrap();
 

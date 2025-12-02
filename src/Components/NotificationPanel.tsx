@@ -45,7 +45,7 @@ const NotificationPanel: React.FC<Props> = ({ onDelete, onClose, triggerRef, Not
 
   const HandleDeleteNoti = async(NotiId: string) => {
     const data = {
-      token: user?.idToken,
+      token: user?.userId,
       NotiId: NotiId,
     };
 
@@ -53,7 +53,7 @@ const NotificationPanel: React.FC<Props> = ({ onDelete, onClose, triggerRef, Not
 
     try {
       await dispatch(ReadNotifications(data)).unwrap();
-      await dispatch(fetchNotifications(user?.idToken)).unwrap();
+      await dispatch(fetchNotifications()).unwrap();
     } catch (err) {
       console.error("Error deleting notification:", err);
     }

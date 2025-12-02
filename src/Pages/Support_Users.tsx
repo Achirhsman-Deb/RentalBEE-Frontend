@@ -28,7 +28,6 @@ const Support_Users = () => {
         status,
         page,
         limit: pageSize,
-        token: user?.idToken,
       })
     );
     // Optionally reset search when page or status changes:

@@ -20,7 +20,7 @@ const CancelBookingModal: React.FC<PropType> = ({ isOpen, onClose, bookingId, ge
 
 
   const handleSubmit = async () => {
-    if (!User?.userId || !User?.idToken) {
+    if (!User?.userId) {
       showAlert({
         type: "error",
         title: "User Info Missing",
@@ -32,7 +32,6 @@ const CancelBookingModal: React.FC<PropType> = ({ isOpen, onClose, bookingId, ge
     const data = {
       bookingId,
       userId: User.userId,
-      token: User.idToken,
     };
 
     try {

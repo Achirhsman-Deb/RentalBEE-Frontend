@@ -29,20 +29,20 @@ const Support_Bookings = () => {
 
   // Open modal and fetch booking details
   const handleViewDetails = useCallback((bookingId: string) => {
-    if (!user?.idToken) return;
+    if (!user?.userId) return;
     setModalOpen(true);
-    dispatch(fetchSupportBookingById({ id: bookingId, token: user?.idToken }));
-  }, [user?.idToken]);
+    dispatch(fetchSupportBookingById({ id: bookingId }));
+  }, [user?.userId]);
 
   const handleStatusUpdate = useCallback(() => {
-    if (!user?.idToken || loading) return;
-    dispatch(fetchSupportBookings({ status, page, limit: pageSize, token: user.idToken }));
-  }, [dispatch, user?.idToken, status, page, pageSize]);
+    if (!user?.userId || loading) return;
+    dispatch(fetchSupportBookings({ status, page, limit: pageSize }));
+  }, [dispatch, user?.userId, status, page, pageSize]);
 
 
   useEffect(() => {
     handleStatusUpdate();
-  }, [status, page, pageSize, user?.idToken]);
+  }, [status, page, pageSize, user?.userId]);
 
   useEffect(() => {
     if (user?.role !== "SUPPORT_AGENT") {

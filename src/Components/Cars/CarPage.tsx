@@ -22,7 +22,7 @@ const CarPage: React.FC<CarPageProps> = ({ cars }: { cars: Car[] }) => {
     useEffect(() => {
         if (user) {
             setloggedin(true);
-            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("user_data", JSON.stringify(user));
         } else setloggedin(false);
     }, [user]);
 

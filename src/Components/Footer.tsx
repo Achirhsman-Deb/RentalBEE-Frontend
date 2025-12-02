@@ -12,7 +12,7 @@ function Footer() {
   useEffect(() => {
     if (user) {
       setloggedin(true);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user_data", JSON.stringify(user));
     } else setloggedin(false);
   }, [user]);
 

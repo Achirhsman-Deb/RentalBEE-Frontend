@@ -5,10 +5,10 @@ import Modal from "./Modal";
 import OrderSummeryPrices from "../Components/MyBookings/OrderSummeryPrices";
 import { useAlert } from "../Components/AlertProvider";
 import { ApiEndPoint } from "../utils";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store/store";
 import { fetchSupportBookingById } from "../slices/ThunkAPI/ThunkAPI";
-import axios from "axios";
+import api from "../slices/ThunkAPI/api";
 
 interface BookingDetailsProps {
   bookingDetails: DetailedBooking | null;
@@ -94,8 +94,8 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
   const [days, setDays] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
   const myalert = useAlert();
-  const { user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
+  console.log(bookingDetails)
 
   useEffect(() => {
     if (bookingDetails?.pickupDateTime && bookingDetails?.dropoffDateTime) {
@@ -201,12 +201,12 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
   const handleStatusChange = async (newStatus: string) => {
     try {
       setUpdating(true);
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `${ApiEndPoint}/support/reservations/${bookingDetails._id}`,
         { status: newStatus },
         {
           headers: {
-            Authorization: `Bearer ${user?.idToken}`,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -216,7 +216,6 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
       dispatch(
         fetchSupportBookingById({
           id: bookingDetails._id,
-          token: user?.idToken,
         })
       );
 
@@ -286,7 +285,7 @@ const UserBookingDetailsModal: React.FC<BookingDetailsProps> = ({
                         {bookingDetails.status}
                       </span>
 
-                      {bookingDetails.cancelRequest && (
+                      {bookingDetails.cancelRequest.status !== "NONE" && (
                         <span
                           className={`ml-2 px-2 py-1 rounded-md text-sm font-medium text-red-600 bg-red-100`}
                         >

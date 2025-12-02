@@ -34,7 +34,6 @@ const CarBooking: React.FC = () => {
   const showAlert = useAlert();
   const UserId = useSelector((state: RootState) => state.auth.user?.userId);
   const User = useSelector((state: RootState) => state.auth.user);
-  const UserIdToken = useSelector((state: RootState) => state.auth.user?.idToken);
   const homepageState = useSelector((state: RootState) => state.homepage);
   const bookingStatus = useSelector((state: RootState) => state.booking);
   const carState = useSelector((state: RootState) => state.cars);
@@ -170,7 +169,6 @@ const CarBooking: React.FC = () => {
     }
 
     const data = {
-      token: User?.idToken + "",
       carId: carId,
       clientId: UserId,
       pickupDateTime: `${dates.pickupDate.toISOString().split("T")[0]} ${dates.pickupTime}`,
@@ -236,7 +234,7 @@ const CarBooking: React.FC = () => {
         title: "Congratulations!",
         subtitle: `${carName} is booked for ${pickupFormatted} - ${dropoffFormatted}\nYou can change booking details until ${changeDeadlineFormatted}.\nYour order: #${bookingStatus.orderId} (${orderDateFormatted})`,
       });
-      dispatch(fetchNotifications(UserIdToken));
+      dispatch(fetchNotifications());
       dispatch(resetBookingStatus());
       nav("/my-bookings");
     }

@@ -22,8 +22,8 @@ const DocumentsUploader = () => {
 
   // Fetch existing user documents
   useEffect(() => {
-    if (user?.userId && user?.idToken) {
-      dispatch(getDocumentsThunk({ userId: user.userId, token: user.idToken }));
+    if (user?.userId) {
+      dispatch(getDocumentsThunk({ userId: user.userId}));
     }
   }, [user, dispatch]);
 
@@ -42,7 +42,7 @@ const DocumentsUploader = () => {
   };
 
   const handleSubmit = async (key: UploadKeys) => {
-    if (!user?.userId || !user?.idToken || !files[key]) return;
+    if (!user?.userId || !user?.userId || !files[key]) return;
 
     try {
       await dispatch(
@@ -50,11 +50,10 @@ const DocumentsUploader = () => {
           userId: user.userId,
           docType: key,
           file: files[key]!,
-          token: user.idToken,
         })
       ).unwrap();
 
-      await dispatch(getDocumentsThunk({ userId: user.userId, token: user.idToken }));
+      await dispatch(getDocumentsThunk({ userId: user.userId }));
       setFiles((prev) => ({ ...prev, [key]: null }));
     } catch (error: any) {
       console.error(`Failed to upload ${key}:`, error);

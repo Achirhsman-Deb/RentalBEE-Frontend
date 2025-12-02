@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { FileText, X } from "lucide-react";
-import axios from "axios";
 import { ApiEndPoint } from "../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store/store";
 import { fetchUserDocumentsById } from "../slices/ThunkAPI/ThunkAPI";
+import api from "../slices/ThunkAPI/api";
 
 interface DocumentDetails {
   documentUrl: string | null;
@@ -61,7 +61,7 @@ const UserDetailsModal: React.FC<Props> = ({
     try {
       setLoadingVerify(true);
 
-      const res = await axios.put(
+      const res = await api.put(
         `${ApiEndPoint}/support/documents/${userInfo.id}`,
         {
           documentType:
@@ -73,15 +73,14 @@ const UserDetailsModal: React.FC<Props> = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user?.idToken}`,
           },
         }
       );
 
       if (res.data.success) {
-        if (user?.idToken) {
+        if (user?.userId) {
           dispatch(
-            fetchUserDocumentsById({ userId: userInfo.id, token: user.idToken })
+            fetchUserDocumentsById({ userId: userInfo.id })
           );
         }
       }

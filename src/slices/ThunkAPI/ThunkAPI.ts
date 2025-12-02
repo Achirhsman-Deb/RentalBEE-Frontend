@@ -1,64 +1,26 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import api from "./api";
 import { Booking, BookingStatus, EditBookingPayload } from "../../types/BookingTypes";
-import { ApiEndPoint } from "../../utils";
 import { ExportReportPayload, ReportData, ReportFilters } from "../../types/ReportTypes";
 import { AppNotification } from "../NotificationSlice";
 
-export interface SingleDocument {
-  documentUrl: string | null;
-  status: string;
-  fileName: string | null;
-  fileSize: string | null;
-}
-
-export interface UserDocumentsResponse {
-  success: boolean;
-  message: string;
-  data: {
-    AadhaarCard: SingleDocument;
-    DrivingLicense: SingleDocument;
-  };
-}
-
+// ⚠️ MODIFIED INTERFACE
 export interface UserDocumentsParams {
   userId: string;
-  token: string;
 }
 
-export interface DocumentStatus {
-  AadhaarCard: string;
-  DrivingLicense: string;
-}
-
-export interface UserWithDocuments {
-  userId: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  createdAt: string;
-  documents: DocumentStatus;
-}
-
-export interface FetchUsersResponse {
-  success: boolean;
-  message: string;
-  currentPage: number;
-  totalPages: number;
-  totalUsers: number;
-  count: number;
-  data: UserWithDocuments[];
-}
-
+// ⚠️ MODIFIED INTERFACE
 export interface FetchUsersParams {
   status?: "ALL" | "VERIFIED" | "UNVERIFIED";
   page?: number;
   limit?: number;
-  token: string | undefined;
+  // token: string | undefined; <--- REMOVED
 }
 
+// ⚠️ MODIFIED INTERFACE
 interface ReservationData {
-  token: string;
+  // token: string; <--- REMOVED
   carId: string;
   clientId: string;
   pickupDateTime: string;
@@ -75,44 +37,42 @@ interface FetchClientReviewsPayload {
   direction?: string;
 }
 
+// ⚠️ MODIFIED INTERFACE
 export interface BookingDetailsPayload {
   bookingId: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
+// ⚠️ MODIFIED INTERFACE
 interface cancelDataType {
   bookingId: string;
   userId: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
+// ⚠️ MODIFIED INTERFACE
 interface FetchBookingsArgs {
   UserId: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
+// ⚠️ MODIFIED INTERFACE
 interface noti {
-  token: string | undefined;
+  // token: string | undefined; <--- REMOVED
   NotiId: string;
 }
 
+// ⚠️ MODIFIED INTERFACE
 export interface FeedbackPayload {
   bookingId: string;
   carId: string;
   clientId: string;
   feedbackText: string;
   rating: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
-type BookingApiItem = {
-  bookingId: string;
-  bookingStatus: string;
-  carId: string;
-  carImageUrl: string;
-  carModel: string;
-  orderDetails: string;
-};
+// ... (Other interfaces like SingleDocument, DocumentStatus, UserWithDocuments, FetchUsersResponse, BookingApiItem remain the same) ...
 
 const statusMap: Record<string, BookingStatus> = {
   BOOKED: 'booked',
@@ -123,15 +83,15 @@ const statusMap: Record<string, BookingStatus> = {
   CANCELED: 'canceled',
 };
 
+// --- AUTHENTICATED THUNKS (Bearer Token removed) ---
+
 export const confirmReservation = createAsyncThunk(
   "booking/confirmReservation",
   async (data: ReservationData, { rejectWithValue }) => {
     try {
-      const { token, ...bookingData } = data;
-      const response = await axios.post(ApiEndPoint + "/bookings/", bookingData, {
+      const response = await api.post("/bookings/", data, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         }
       });
 
@@ -151,20 +111,22 @@ export const confirmReservation = createAsyncThunk(
 
 export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
   "booking/fetchBookings",
-  async ({ UserId, token }, { rejectWithValue }) => {
+  // ⚠️ REMOVED TOKEN DESTRUCTURING
+  async ({ UserId }, { rejectWithValue }) => { 
     try {
-      const res = await axios.get<{ content: BookingApiItem[] }>(
-        ApiEndPoint + `/bookings/${UserId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        }
+      // ⚠️ REMOVED TOKEN HEADER
+      const res = await api.get<{ content: any[] }>(
+        `/bookings/${UserId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
       });
 
       if (res.status === 204) {
         return []; // no bookings
       }
-
+      
+      // ... (Mapping logic remains the same) ...
       return res.data.content.map((item) => {
         const normalizedStatus = statusMap[item.bookingStatus];
         const dateMatch = item.orderDetails.match(/\((.*?)\)/)?.[1];
@@ -188,10 +150,11 @@ export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
   }
 );
 
+// --- UNAUTHENTICATED/COMMON THUNKS (Use 'api' instance, no header change) ---
 
 export const getLocations = createAsyncThunk("locations/getLocations", async (_, thunkAPI) => {
   try {
-    const response = await axios.get(ApiEndPoint + "/home/locations");
+    const response = await api.get("/home/locations");
     return response.data;
   } catch (error) {
     const err = error as AxiosError;
@@ -203,7 +166,7 @@ export const getCarDetailsById = createAsyncThunk(
   "car/getCarDetailsById",
   async (carId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(ApiEndPoint + `/cars/${carId}`);
+      const response = await api.get(`/cars/${carId}`);
       return response.data;
     } catch (error) {
       const err = error as AxiosError;
@@ -212,7 +175,6 @@ export const getCarDetailsById = createAsyncThunk(
   }
 );
 
-
 export interface RegistrationData {
   firstName: string;
   email: string;
@@ -220,19 +182,15 @@ export interface RegistrationData {
   lastName: string;
 }
 
-// AsyncThunkAction<any, RegistrationData, AsyncThunkConfig>
 export const registerUser = createAsyncThunk('auth/sign-up',
   async (data: RegistrationData, { rejectWithValue }) => {
     try {
-      // console.log(data);
-      const response = await axios.post(ApiEndPoint + '/auth/sign-up', data);
-      // console.log(response.data.message);
+      const response = await api.post('/auth/sign-up', data);
       return response.data.message;
     } catch (error) {
       const err = error as AxiosError<{ error: string }>;
       return rejectWithValue(err.response?.data?.error || 'Registration failed');
     }
-
   }
 );
 
@@ -243,8 +201,7 @@ interface LoginData {
 
 export const loginUser = createAsyncThunk("auth/sign-in", async (data: LoginData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(ApiEndPoint + "/auth/sign-in", data);
-    console.log(response)
+    const response = await api.post("/auth/sign-in", data);
     return response.data.body;
   } catch (error) {
     const err = error as AxiosError<{ message: string }>;
@@ -254,69 +211,73 @@ export const loginUser = createAsyncThunk("auth/sign-in", async (data: LoginData
 
 export const logoutUser = createAsyncThunk<void, void>(
   "auth/logout-user",
-  async (_, thunkAPI) => {
-    // No API call, just immediately resolve
+  async (_, ) => {
     try {
+      // 💡 CALLING API TO CLEAR SERVER-SIDE COOKIES
+      await api.post('/auth/logout'); 
       return;
     } catch (error) {
-      const err = error as AxiosError<{ error: string }>;
-      return thunkAPI.rejectWithValue(err.response?.data || "Failed to fetch locations");
+      // Still return success to clear frontend state, even if API call fails (e.g., token already gone)
+      return; 
     }
   }
 );
+
+// --- AUTHENTICATED THUNKS (Bearer Token removed) ---
+
 interface ChangePasswordData {
   id: string;
   currentPassword: string;
   newPassword: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
 export const changePassword = createAsyncThunk("auth/change-passsword", async (data: ChangePasswordData, { rejectWithValue }) => {
   try {
-    // console.log(ApiEndPoint + "/users/" + data.id + "/change-password");
-    const response = await axios.put(
-      ApiEndPoint + "/users/" + data.id + "/change-password",
-      { currentPassword: data.currentPassword, newPassword: data.newPassword },
+    const { id, currentPassword, newPassword } = data; // ⚠️ REMOVED TOKEN DESTRUCTURING
+    const response = await api.put(
+      `/users/${id}/change-password`,
+      { currentPassword, newPassword },
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${data.token}`,
+          // ⚠️ REMOVED: 'Authorization': `Bearer ${data.token}`, 
         }
       }
     );
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     const err = error as AxiosError<{ error: string }>;
     return rejectWithValue(err.response?.data?.error || "Unknown Error");
   }
 });
+
 interface PersonalInfoGetData {
   id: string;
-  token: string;
+  // token: string; <--- REMOVED
 }
 
 export const personalInfoGet = createAsyncThunk("auth/personal-info", async (data: PersonalInfoGetData, { rejectWithValue }) => {
   try {
-    const response = await axios.get(
-      ApiEndPoint + `/user/personal-info/${data.id}`,
+    const response = await api.get(
+      `/user/personal-info/${data.id}`,
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${data.token}`,
+          // ⚠️ REMOVED: 'Authorization': `Bearer ${data.token}`, 
         },
       }
     );
-    // console.log(response.data);
     return response.data;
   } catch (error) {
     const err = error as AxiosError<{ error: string }>;
     return rejectWithValue(err.response?.data?.error || "Unknown Error");
   }
 });
+
 export interface PersonalInfoPutData {
   id: string;
-  token: string;
+  // token: string; <--- REMOVED
   firstName: string;
   lastName: string;
   phoneNumber: string;
@@ -340,20 +301,19 @@ export const personalInfoPut = createAsyncThunk(
       if (data.city) formData.append("city", data.city);
       if (data.street) formData.append("street", data.street);
       if (data.postalCode) formData.append("postalCode", data.postalCode);
-
-      // Append file if user uploaded one
       if (data.imageFile) {
         formData.append("imageUrl", data.imageFile);
       }
 
       console.log(formData)
 
-      const response = await axios.put(
-        `${ApiEndPoint}/user/personal-info/${data.id}`,
+      const response = await api.put(
+        `/user/personal-info/${data.id}`,
         formData,
         {
           headers: {
-            Authorization: `Bearer ${data.token}`,
+            // Must keep Content-Type for FormData, but remove Authorization
+            // ⚠️ REMOVED: Authorization: `Bearer ${data.token}`, 
           },
         }
       );
@@ -366,15 +326,17 @@ export const personalInfoPut = createAsyncThunk(
   }
 );
 
+// --- UNAUTHENTICATED THUNKS (No change in logic, use 'api') ---
+
 export const fetchBookedDates = createAsyncThunk<
-  string[],             // Return type
-  string,               // carId as argument
-  { rejectValue: string }  // Rejected value type
+  string[],
+  string,
+  { rejectValue: string }
 >(
   "car/fetchBookedDates",
   async (carId, { rejectWithValue }) => {
     try {
-      const response = await axios.get<{ content: string[] }>(`${ApiEndPoint}/cars/${carId}/booked-days`);
+      const response = await api.get<{ content: string[] }>(`/cars/${carId}/booked-days`);
       return response.data.content;
     } catch (error) {
       const err = error as AxiosError<{ message?: string }>;
@@ -383,14 +345,16 @@ export const fetchBookedDates = createAsyncThunk<
   }
 );
 
+// --- AUTHENTICATED THUNKS (Bearer Token removed) ---
+
 export const postFeedback = createAsyncThunk(
   "feedback/postFeedback",
   async (feedbackData: FeedbackPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${ApiEndPoint}/feedbacks`, feedbackData, {
+      const response = await api.post(`/feedbacks`, feedbackData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${feedbackData.token}`
+          // ⚠️ REMOVED: 'Authorization': `Bearer ${feedbackData.token}`
         }
       });
       return response.data;
@@ -406,12 +370,12 @@ export const fetchReportData = createAsyncThunk<ReportData[], ReportFilters, { r
   "reports/fetchReportData",
   async (filters, { rejectWithValue }) => {
     try {
-      const { token, ...queryParams } = filters;
-      const response = await axios.get<{ content: ReportData[] }>(`${ApiEndPoint}/reports`, {
+      const { token, ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
+      const response = await api.get<{ content: ReportData[] }>(`/reports`, {
         params: queryParams,
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${filters.token}`
+          // ⚠️ REMOVED: 'Authorization': `Bearer ${filters.token}`
         },
       });
       return response.data.content;
@@ -425,11 +389,11 @@ export const exportReport = createAsyncThunk<string, ExportReportPayload, { reje
   "reports/exportReport",
   async ({ filters, extension }, { rejectWithValue }) => {
     try {
-      const { token, ...queryParams } = filters;
-      const response = await axios.post<{ url: string }>(`${ApiEndPoint}/reports/${extension}`, queryParams, {
+      const { token, ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
+      const response = await api.post<{ url: string }>(`/reports/${extension}`, queryParams, {
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${filters.token}`
+          // ⚠️ REMOVED: 'Authorization': `Bearer ${filters.token}`
         },
       });
       return response.data.url;
@@ -443,13 +407,14 @@ export const cancelBooking = createAsyncThunk(
   'bookings/cancelBooking',
   async (cancelData: cancelDataType, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `${ApiEndPoint}/bookings/cancel/${cancelData.bookingId}`,
-        { userId: cancelData.userId },
+      const { bookingId, userId } = cancelData; // ⚠️ REMOVED TOKEN DESTRUCTURING
+      const response = await api.put(
+        `/bookings/cancel/${bookingId}`,
+        { userId },
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${cancelData.token}`,
+            // ⚠️ REMOVED: 'Authorization': `Bearer ${cancelData.token}`,
           },
         }
       );
@@ -465,14 +430,13 @@ export const cancelBooking = createAsyncThunk(
 
 export const getBookingDetails = createAsyncThunk(
   'bookings/getBookingDetails',
-  async ({ bookingId, token }: BookingDetailsPayload, { rejectWithValue }) => {
+  async ({ bookingId }: BookingDetailsPayload, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        `${ApiEndPoint}/bookings/details/${bookingId}`,
+      const response = await api.get(
+        `/bookings/details/${bookingId}`,
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
           },
         }
       );
@@ -485,13 +449,12 @@ export const getBookingDetails = createAsyncThunk(
   }
 );
 
-
 export const editBooking = createAsyncThunk(
   'booking/editBooking',
-  async ({ bookingId, userId, token, updatedData }: EditBookingPayload, { rejectWithValue }) => {
+  async ({ bookingId, userId, updatedData }: EditBookingPayload, { rejectWithValue }) => { // ⚠️ REMOVED TOKEN DESTRUCTURING
     try {
-      const response = await axios.put(
-        `${ApiEndPoint}/bookings/edit/${bookingId}`,
+      const response = await api.put(
+        `/bookings/edit/${bookingId}`,
         {
           userId,
           ...updatedData
@@ -499,10 +462,10 @@ export const editBooking = createAsyncThunk(
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
+          }
         }
       );
+      console.log(response.data)
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || { message: 'Failed to update booking' });
@@ -517,8 +480,8 @@ export const fetchClientReviews = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.get(
-        `${ApiEndPoint}/cars/${carId}/client-review`,
+      const response = await api.get(
+        `/cars/${carId}/client-review`,
         {
           params: { page, size, sort, direction },
         }
@@ -539,18 +502,17 @@ export const uploadDocumentThunk = createAsyncThunk(
     userId,
     docType,
     file,
-    token,
-  }: { userId: string; docType: string; file: File; token: string }) => {
+  }: { userId: string; docType: string; file: File }) => { // ⚠️ REMOVED TOKEN FROM TYPE
     const formData = new FormData();
     formData.append("document", file);
 
-    const response = await axios.put(
-      `${ApiEndPoint}/user/document/upload/${userId}/${docType}`,
+    const response = await api.put(
+      `/user/document/upload/${userId}/${docType}`,
       formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          // ⚠️ REMOVED: Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -563,11 +525,10 @@ export const getDocumentsThunk = createAsyncThunk(
   "documents/get",
   async ({
     userId,
-    token,
-  }: { userId: string; token: string }) => {
-    const response = await axios.get(`${ApiEndPoint}/user/document/${userId}`, {
+  }: { userId: string }) => { // ⚠️ REMOVED TOKEN FROM TYPE
+    const response = await api.get(`/user/document/${userId}`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        // ⚠️ REMOVED: Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
@@ -576,14 +537,15 @@ export const getDocumentsThunk = createAsyncThunk(
 
 export const fetchNotifications = createAsyncThunk<
   AppNotification[],
-  string | undefined,
+  // ⚠️ CHANGED ARGUMENT TYPE TO VOID/UNDEFINED
+  void, 
   { rejectValue: string }
->("notifications/fetchNotifications", async (token, { rejectWithValue }) => {
+>("notifications/fetchNotifications", async (_, { rejectWithValue }) => {
   try {
-    const res = await axios.get<{ success: boolean; notifications: AppNotification[] }>(`${ApiEndPoint}/notifications/`, {
+    const res = await api.get<{ success: boolean; notifications: AppNotification[] }>(`/notifications/`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        // ⚠️ REMOVED: Authorization: `Bearer ${token}`,
       },
     });
     return res.data.notifications;
@@ -598,12 +560,12 @@ export const ReadNotifications = createAsyncThunk<
   AppNotification,
   noti,
   { rejectValue: string }
->("notifications/readNotification", async (data, { rejectWithValue }) => {
+>("notifications/readNotification", async (data, { rejectWithValue }) => { // ⚠️ REMOVED TOKEN DESTRUCTURING
   try {
-    const res = await axios.patch<{ success: boolean; notification: AppNotification }>(`${ApiEndPoint}/notifications/${data.NotiId}/read`, {}, {
+    const res = await api.patch<{ success: boolean; notification: AppNotification }>(`/notifications/${data.NotiId}/read`, {}, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${data.token}`,
+        // ⚠️ REMOVED: Authorization: `Bearer ${data.token}`,
       },
     });
     return res.data.notification;
@@ -615,20 +577,20 @@ export const ReadNotifications = createAsyncThunk<
 });
 
 export const fetchUsersWithDocuments = createAsyncThunk<
-  FetchUsersResponse, // Return type
-  FetchUsersParams,   // Argument type
-  { rejectValue: string } // Rejection type
+  any,
+  FetchUsersParams,
+  { rejectValue: string }
 >(
   "admin/fetchUsersWithDocuments",
-  async ({ status = "ALL", page = 1, limit = 10, token }, { rejectWithValue }) => {
+  async ({ status = "ALL", page = 1, limit = 10 }, { rejectWithValue }) => { // ⚠️ REMOVED TOKEN DESTRUCTURING
     try {
-      const response = await axios.get<FetchUsersResponse>(
-        `${ApiEndPoint}/support/documents`,
+      const response = await api.get<any>(
+        `/support/documents`,
         {
           params: { status, page, limit },
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // ⚠️ REMOVED: Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -645,19 +607,19 @@ export const fetchUsersWithDocuments = createAsyncThunk<
 
 
 export const fetchUserDocumentsById = createAsyncThunk<
-  UserDocumentsResponse, // Return type
-  UserDocumentsParams,   // Argument type
-  { rejectValue: string } // Rejection type
+  any,
+  UserDocumentsParams,
+  { rejectValue: string }
 >(
   "admin/fetchUserDocumentsById",
-  async ({ userId, token }, { rejectWithValue }) => {
+  async ({ userId }, { rejectWithValue }) => { // ⚠️ REMOVED TOKEN DESTRUCTURING
     try {
-      const response = await axios.get<UserDocumentsResponse>(
-        `${ApiEndPoint}/support/documents/${userId}`,
+      const response = await api.get<any>(
+        `/support/documents/${userId}`,
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // ⚠️ REMOVED: Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -678,18 +640,16 @@ export const fetchSupportBookings = createAsyncThunk(
       status,
       page,
       limit,
-      token,
-    }: { status?: string; page?: number; limit?: number; token?: string },
+    }: { status?: string; page?: number; limit?: number }, // ⚠️ REMOVED TOKEN FROM TYPE
     { rejectWithValue }
   ) => {
     try {
       const params: any = { page, limit };
       if (status && status !== "ALL") params.status = status;
 
-      const response = await axios.get(`${ApiEndPoint}/support/get-bookings`, {
+      const response = await api.get(`/support/get-bookings`, {
         headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}` 
+          "Content-Type": "application/json", 
         },
         params,
       });
@@ -702,12 +662,12 @@ export const fetchSupportBookings = createAsyncThunk(
 
 export const fetchSupportBookingById = createAsyncThunk(
   "support_bookings/fetchById",
-  async ({ id, token }: { id: string; token?: string }, { rejectWithValue }) => {
+  async ({ id }: { id: string }, { rejectWithValue }) => { // ⚠️ REMOVED TOKEN FROM TYPE
     try {
-      const response = await axios.get(`${ApiEndPoint}/support/get-booking/${id}`, {
+      const response = await api.get(`/support/get-booking/${id}`, {
         headers: { 
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          // ⚠️ REMOVED: Authorization: `Bearer ${token}`
         },
       });
       return response.data.booking;

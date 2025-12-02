@@ -103,7 +103,7 @@ const OrderSummery: React.FC<ModalProps> = ({ onClose, isOpen, Details }) => {
     }, [Details?.carId, myalert, onClose]);
 
     useEffect(() => {
-        if (!user?.idToken || !Details?.orderId) {
+        if (!user?.userId || !Details?.orderId) {
             return;
         }
         else {
@@ -114,7 +114,7 @@ const OrderSummery: React.FC<ModalProps> = ({ onClose, isOpen, Details }) => {
                 return;
             }
 
-            dispatch(getBookingDetails({ bookingId: Details.orderId, token: user.idToken }))
+            dispatch(getBookingDetails({ bookingId: Details.orderId}))
                 .unwrap()
                 .then((data: any) => {
                     const pickup = new Date(data.bookingPeriod.pickupDateTime);
@@ -144,7 +144,7 @@ const OrderSummery: React.FC<ModalProps> = ({ onClose, isOpen, Details }) => {
                     });
                 });
         }
-    }, [Details.orderId, user?.idToken,reduxLocations]);
+    }, [Details.orderId, user?.userId,reduxLocations]);
 
     if (!isOpen) return null;
     return (

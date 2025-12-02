@@ -102,7 +102,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (user) {
       const userId = user.userId;
-      dispatch(personalInfoGet({ id: userId, token: user?.idToken + "" }));
+      dispatch(personalInfoGet({id: userId}));
       if (user?.role === "ADMIN") {
         navigate("/dashboard");
       }
@@ -142,7 +142,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (user) {
       setloggedin(true);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user_data", JSON.stringify(user));
     } else setloggedin(false);
   }, [user]);
 

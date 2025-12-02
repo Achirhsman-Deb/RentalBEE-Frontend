@@ -31,14 +31,12 @@ const MyBookings = () => {
 
   const UserId = useSelector((state: RootState) => state.auth.user?.userId);
   const bookings = useSelector((state: RootState) => state.booking.bookings);
-  const User = useSelector((state: RootState) => state.auth.user);
   const loading = useSelector((state: RootState) => state.booking.loading);
   const error = useSelector((state: RootState) => state.booking.error);
 
   const getBookings = () => {
     if (UserId) {
-      dispatch(fetchBookings({ UserId, token: User?.idToken + "" }));
-      console.log(error)
+      dispatch(fetchBookings({ UserId }));
     }
   }
 

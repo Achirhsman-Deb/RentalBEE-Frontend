@@ -39,7 +39,6 @@ const RenderOptions: React.FC<RenderOptionsProps> = ({
 
   // On mount or option/selection change, set initial focus
   useEffect(() => {
-    console.log("Current index:", findIndexByValue(selectedValue));
     if (selectedValue && findIndexByValue(selectedValue) !== -1) {
       setHoveredValue(selectedValue);
     } else if (options.length > 0) {

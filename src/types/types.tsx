@@ -21,7 +21,6 @@ export type FilterFormData = {
     priceRange: number[];
 }
 export type User={
-    "idToken"?: string,
     "role"?: string,
     "userId":string,
     "imageUrl"?: string,

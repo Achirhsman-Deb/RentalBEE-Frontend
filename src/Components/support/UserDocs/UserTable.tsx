@@ -86,11 +86,11 @@ const UserTable: React.FC<UserTableProps> = ({ data }) => {
 
   // ✅ Handle “View Details” click
   const handleViewDetails = async (userId: string, row: UserRow) => {
-    if (!user?.idToken) return;
+    if (!user?.userId) return;
     setSelectedUser(row);
     setModalOpen(true);
     setDropdownIndex(null);
-    dispatch(fetchUserDocumentsById({ userId, token: user.idToken }));
+    dispatch(fetchUserDocumentsById({ userId}));
   };
 
   return (

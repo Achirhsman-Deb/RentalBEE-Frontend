@@ -32,9 +32,9 @@ const Header: React.FC = () => {
   useEffect(() => {
     if (user) {
       setloggedin(true);
-      localStorage.setItem("user", JSON.stringify(user));
-      if (user.idToken) {
-        dispatch(fetchNotifications(user.idToken));
+      localStorage.setItem("user_data", JSON.stringify(user));
+      if (user.userId) {
+        dispatch(fetchNotifications());
       }
     } else setloggedin(false);
   }, [user]);
@@ -134,7 +134,7 @@ const Header: React.FC = () => {
                   onchange={(value) => {
                     if (value[0] === "logout") {
                       setloggedin(false);
-                      localStorage.removeItem("user");
+                      localStorage.removeItem("user_data");
                       dispatch(logoutUser());
                       navigate("/");
                     } else if (value[0] === "profile") {

@@ -13,7 +13,6 @@ export interface Booking {
 export interface EditBookingPayload {
   bookingId: string;
   userId:string;
-  token: string;
   updatedData: {
     pickupLocationId: string;
     dropoffLocationId: string;

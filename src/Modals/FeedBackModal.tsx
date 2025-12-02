@@ -34,7 +34,6 @@ const FeedBackModal: React.FC<PropType> = ({ isOpen, onClose, Data }) => {
       clientId: UserId,
       feedbackText: feedback,
       rating: rating.toString(),
-      token: User?.idToken+""
     };
 
     dispatch(postFeedback(data));
