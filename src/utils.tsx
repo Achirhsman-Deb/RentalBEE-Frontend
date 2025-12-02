@@ -1,1 +1,1 @@
-export const ApiEndPoint = "http://localhost:5000"
+export const ApiEndPoint = "https://rentalbee-backend.onrender.com"
