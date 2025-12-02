@@ -3,7 +3,6 @@ export interface ReportFilters {
   dateTo: string;
   locationId: string;
   reportType: string;
-  token:string;
 }
 
 export interface ReportData {

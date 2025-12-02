@@ -175,7 +175,6 @@ export default function AdminDashboard() {
       const payload = {
         filters,
         extension,
-        token,
       };
 
       const url: string = await dispatch(exportReport(payload)).unwrap();

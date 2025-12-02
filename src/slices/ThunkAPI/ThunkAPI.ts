@@ -5,22 +5,17 @@ import { Booking, BookingStatus, EditBookingPayload } from "../../types/BookingT
 import { ExportReportPayload, ReportData, ReportFilters } from "../../types/ReportTypes";
 import { AppNotification } from "../NotificationSlice";
 
-// ⚠️ MODIFIED INTERFACE
 export interface UserDocumentsParams {
   userId: string;
 }
 
-// ⚠️ MODIFIED INTERFACE
 export interface FetchUsersParams {
   status?: "ALL" | "VERIFIED" | "UNVERIFIED";
   page?: number;
   limit?: number;
-  // token: string | undefined; <--- REMOVED
 }
 
-// ⚠️ MODIFIED INTERFACE
 interface ReservationData {
-  // token: string; <--- REMOVED
   carId: string;
   clientId: string;
   pickupDateTime: string;
@@ -37,42 +32,81 @@ interface FetchClientReviewsPayload {
   direction?: string;
 }
 
-// ⚠️ MODIFIED INTERFACE
 export interface BookingDetailsPayload {
   bookingId: string;
-  // token: string; <--- REMOVED
 }
 
-// ⚠️ MODIFIED INTERFACE
 interface cancelDataType {
   bookingId: string;
   userId: string;
-  // token: string; <--- REMOVED
 }
 
-// ⚠️ MODIFIED INTERFACE
 interface FetchBookingsArgs {
   UserId: string;
-  // token: string; <--- REMOVED
 }
 
-// ⚠️ MODIFIED INTERFACE
 interface noti {
-  // token: string | undefined; <--- REMOVED
   NotiId: string;
 }
 
-// ⚠️ MODIFIED INTERFACE
 export interface FeedbackPayload {
   bookingId: string;
   carId: string;
   clientId: string;
   feedbackText: string;
   rating: string;
-  // token: string; <--- REMOVED
 }
 
 // ... (Other interfaces like SingleDocument, DocumentStatus, UserWithDocuments, FetchUsersResponse, BookingApiItem remain the same) ...
+
+export interface SingleDocument {
+  documentUrl: string | null;
+  status: string;
+  fileName: string | null;
+  fileSize: string | null;
+}
+
+export interface DocumentStatus {
+  AadhaarCard: string;
+  DrivingLicense: string;
+}
+
+export interface UserWithDocuments {
+  userId: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  createdAt: string;
+  documents: DocumentStatus;
+}
+
+// type BookingApiItem = {
+//   bookingId: string;
+//   bookingStatus: string;
+//   carId: string;
+//   carImageUrl: string;
+//   carModel: string;
+//   orderDetails: string;
+// };
+
+export interface UserDocumentsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    AadhaarCard: SingleDocument;
+    DrivingLicense: SingleDocument;
+  };
+}
+
+export interface FetchUsersResponse {
+  success: boolean;
+  message: string;
+  currentPage: number;
+  totalPages: number;
+  totalUsers: number;
+  count: number;
+  data: UserWithDocuments[];
+}
 
 const statusMap: Record<string, BookingStatus> = {
   BOOKED: 'booked',
@@ -370,7 +404,7 @@ export const fetchReportData = createAsyncThunk<ReportData[], ReportFilters, { r
   "reports/fetchReportData",
   async (filters, { rejectWithValue }) => {
     try {
-      const { token, ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
+      const { ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
       const response = await api.get<{ content: ReportData[] }>(`/reports`, {
         params: queryParams,
         headers: {
@@ -389,7 +423,7 @@ export const exportReport = createAsyncThunk<string, ExportReportPayload, { reje
   "reports/exportReport",
   async ({ filters, extension }, { rejectWithValue }) => {
     try {
-      const { token, ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
+      const { ...queryParams } = filters; // ⚠️ TOKEN DESTROYED
       const response = await api.post<{ url: string }>(`/reports/${extension}`, queryParams, {
         headers: {
           "Content-Type": "application/json",

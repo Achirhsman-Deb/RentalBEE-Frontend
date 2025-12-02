@@ -19,7 +19,6 @@ const FeedBackModal: React.FC<PropType> = ({ isOpen, onClose, Data }) => {
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
   const [feedback, setFeedback] = useState('');
-  const User = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch<AppDispatch>();
   const UserId = useSelector((state: RootState) => state.auth.user?.userId);
 
