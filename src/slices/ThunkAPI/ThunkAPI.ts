@@ -9,6 +9,10 @@ export interface UserDocumentsParams {
   userId: string;
 }
 
+interface GoogleLoginData {
+  credential: string;
+}
+
 export interface FetchUsersParams {
   status?: "ALL" | "VERIFIED" | "UNVERIFIED";
   page?: number;
@@ -56,8 +60,6 @@ export interface FeedbackPayload {
   feedbackText: string;
   rating: string;
 }
-
-// ... (Other interfaces like SingleDocument, DocumentStatus, UserWithDocuments, FetchUsersResponse, BookingApiItem remain the same) ...
 
 export interface SingleDocument {
   documentUrl: string | null;
@@ -117,8 +119,6 @@ const statusMap: Record<string, BookingStatus> = {
   CANCELED: 'canceled',
 };
 
-// --- AUTHENTICATED THUNKS (Bearer Token removed) ---
-
 export const confirmReservation = createAsyncThunk(
   "booking/confirmReservation",
   async (data: ReservationData, { rejectWithValue }) => {
@@ -145,10 +145,8 @@ export const confirmReservation = createAsyncThunk(
 
 export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
   "booking/fetchBookings",
-  // ⚠️ REMOVED TOKEN DESTRUCTURING
   async ({ UserId }, { rejectWithValue }) => { 
     try {
-      // ⚠️ REMOVED TOKEN HEADER
       const res = await api.get<{ content: any[] }>(
         `/bookings/${UserId}`, {
           headers: {
@@ -157,10 +155,9 @@ export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
       });
 
       if (res.status === 204) {
-        return []; // no bookings
+        return []; 
       }
       
-      // ... (Mapping logic remains the same) ...
       return res.data.content.map((item) => {
         const normalizedStatus = statusMap[item.bookingStatus];
         const dateMatch = item.orderDetails.match(/\((.*?)\)/)?.[1];
@@ -184,7 +181,18 @@ export const fetchBookings = createAsyncThunk<Booking[], FetchBookingsArgs>(
   }
 );
 
-// --- UNAUTHENTICATED/COMMON THUNKS (Use 'api' instance, no header change) ---
+export const googleLoginUser = createAsyncThunk(
+  "auth/google-sign-in",
+  async (data: GoogleLoginData, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/google", data);
+      return response.data.body;
+    } catch (error) {
+      const err = error as AxiosError<{ message: string }>;
+      return rejectWithValue(err.response?.data?.message || "Google Login Failed");
+    }
+  }
+);
 
 export const getLocations = createAsyncThunk("locations/getLocations", async (_, thunkAPI) => {
   try {
@@ -247,11 +255,9 @@ export const logoutUser = createAsyncThunk<void, void>(
   "auth/logout-user",
   async (_, ) => {
     try {
-      // 💡 CALLING API TO CLEAR SERVER-SIDE COOKIES
       await api.post('/auth/logout'); 
       return;
     } catch (error) {
-      // Still return success to clear frontend state, even if API call fails (e.g., token already gone)
       return; 
     }
   }
@@ -263,19 +269,17 @@ interface ChangePasswordData {
   id: string;
   currentPassword: string;
   newPassword: string;
-  // token: string; <--- REMOVED
 }
 
 export const changePassword = createAsyncThunk("auth/change-passsword", async (data: ChangePasswordData, { rejectWithValue }) => {
   try {
-    const { id, currentPassword, newPassword } = data; // ⚠️ REMOVED TOKEN DESTRUCTURING
+    const { id, currentPassword, newPassword } = data;
     const response = await api.put(
       `/users/${id}/change-password`,
       { currentPassword, newPassword },
       {
         headers: {
           'Content-Type': 'application/json',
-          // ⚠️ REMOVED: 'Authorization': `Bearer ${data.token}`, 
         }
       }
     );
@@ -298,7 +302,6 @@ export const personalInfoGet = createAsyncThunk("auth/personal-info", async (dat
       {
         headers: {
           'Content-Type': 'application/json',
-          // ⚠️ REMOVED: 'Authorization': `Bearer ${data.token}`, 
         },
       }
     );

@@ -95,6 +95,7 @@ const MyBookings = () => {
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-10 mt-4">My bookings</h1>
       <BookingTabs selected={selectedTab} onChange={(tab) => { setSelectedTab(tab); setCurrentPage(1); }} />
 
+      {/* Loading State */}
       {loading && (
         <div className="flex flex-col items-center justify-center mt-20">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-black"></div>
@@ -102,6 +103,7 @@ const MyBookings = () => {
         </div>
       )}
 
+      {/* Error State */}
       {error && (
         <div className="flex flex-col items-center justify-center mt-20">
           <p className="text-2xl font-semibold text-[#E6B800]">Oops! Something went wrong.</p>
@@ -109,23 +111,31 @@ const MyBookings = () => {
         </div>
       )}
 
-      {bookings.length === 0 && (
+      {/* Empty State - FIXED: Added check for !loading and !error */}
+      {!loading && !error && bookings.length === 0 && (
         <div className="flex flex-col items-center justify-center mt-20">
           <p className="text-2xl font-semibold text-[#E6B800]">No past bookings</p>
         </div>
       )}
 
-      {!loading && !error && (
+      {/* Data State */}
+      {!loading && !error && bookings.length > 0 && (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 justify-items-center sm:justify-items-stretch">
-            {currentBookings.map((b) => (
-              <BookingCard
-                key={b.id}
-                booking={b}
-                getBookingsFunc={getBookings}
-                OrderSummeryOpen={() => handleOpenOrderSummary(b)} 
-              />
-            ))}
+            {currentBookings.length > 0 ? (
+                currentBookings.map((b) => (
+                <BookingCard
+                    key={b.id}
+                    booking={b}
+                    getBookingsFunc={getBookings}
+                    OrderSummeryOpen={() => handleOpenOrderSummary(b)} 
+                />
+                ))
+            ) : (
+                <div className="col-span-full flex justify-center mt-10 text-gray-500">
+                    No bookings found in this category.
+                </div>
+            )}
           </div>
 
           {totalPages > 1 && (

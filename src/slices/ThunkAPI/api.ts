@@ -6,20 +6,17 @@ const api = axios.create({
     withCredentials: true,
 });
 
-// Flag to prevent multiple simultaneous refresh calls
 let isRefreshing = false;
 let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void; }> = [];
 
-// Function to process the queue of failed requests
 const processQueue = (error: any | null) => {
     failedQueue.forEach(prom => {
         if (error) {
             prom.reject(error);
         } else {
-            prom.resolve(true); 
+            prom.resolve(true);
         }
     });
-
     failedQueue = [];
 };
 
@@ -27,13 +24,17 @@ const processQueue = (error: any | null) => {
 
 api.interceptors.response.use(
     (response) => {
-        return response; 
+        return response;
     },
     async (error) => {
         const originalRequest = error.config;
+        const excludedEndpoints = ['/auth/sign-in', '/auth/sign-up', '/auth/refresh-token','/auth/google','/auth/forgot-pass','/auth/send-otp','/auth/logout'];
 
-        if (error.response?.status === 401 && originalRequest.url !== '/auth/refresh-token') {
-            
+        if (
+            error.response?.status === 401 && 
+            !excludedEndpoints.includes(originalRequest.url) && 
+            !originalRequest._retry 
+        ) {
             if (isRefreshing) {
                 return new Promise((resolve, reject) => {
                     failedQueue.push({ resolve, reject });
@@ -48,10 +49,10 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                await api.get('/auth/refresh-token'); 
+                await api.get('/auth/refresh-token');
                 isRefreshing = false;
-                processQueue(null); 
-                return api(originalRequest); 
+                processQueue(null);
+                return api(originalRequest);
 
             } catch (refreshError) {
                 isRefreshing = false;

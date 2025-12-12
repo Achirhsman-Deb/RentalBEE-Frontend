@@ -210,16 +210,11 @@ const PersonalInfoForm = () => {
       <div className="border border-[#000000] rounded-md p-4 flex items-center justify-between max-[560px]:justify-center max-[560px]:text-center h-[132px] max-[560px]:h-auto max-[560px]:relative max-[560px]:-z-10">
         <div className="flex items-center gap-4 max-[560px]:flex-col max-[560px]:justify-center ">
           <img
-            src={
-              formData?.imageUrl
-                ? formData.imageUrl.startsWith("blob:")
-                  ? formData.imageUrl // blob: URL → use as-is
-                  : `${formData.imageUrl}?t=${Date.now()}` // remote URL → add timestamp to avoid cache
-                : "https://res.cloudinary.com/duyv9y7fc/image/upload/v1756390169/20171206_01_ixegsw.jpg"
-            }
+            src={formData?.imageUrl || "https://res.cloudinary.com/duyv9y7fc/image/upload/v1756390169/20171206_01_ixegsw.jpg"}
             alt="Profile"
             className="w-28 h-28 rounded-full object-cover"
           />
+        
           <div className="flex flex-col  justify-start ">
             <p className="font- text-2xl">{user?.username}</p>
             <p className="text-sm  text-gray-medium">{user?.email}</p>

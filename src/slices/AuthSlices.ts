@@ -3,6 +3,7 @@ import {
     loginUser, 
     registerUser, 
     logoutUser, 
+    googleLoginUser,
     changePassword, 
     personalInfoGet, 
     personalInfoPut 
@@ -79,6 +80,21 @@ const authSlice = createSlice({
                 localStorage.setItem('user_data', JSON.stringify(action.payload));
             })
             .addCase(loginUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            // Google signin
+            .addCase(googleLoginUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(googleLoginUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                localStorage.setItem('user_data', JSON.stringify(action.payload));
+            })
+            .addCase(googleLoginUser.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })
